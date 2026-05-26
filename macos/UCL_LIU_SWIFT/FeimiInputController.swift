@@ -66,7 +66,7 @@ final class FeimiInputController: IMKInputController {
     }
 
     private func isAllowedCompositionCharacter(_ character: Character) -> Bool {
-        character.isLetter || character == "," || character == "+" || character == "-"
+        character.isLetter || ",.'[]+-".contains(character)
     }
 
     private func updateMarkedText(_ result: FeimiEngineResult, client sender: Any!) {

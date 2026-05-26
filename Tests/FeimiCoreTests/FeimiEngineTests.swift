@@ -18,6 +18,20 @@ final class FeimiEngineTests: XCTestCase {
         XCTAssertNil(second.commitText)
     }
 
+    func testPunctuationCodesUpdateCandidates() {
+        var engine = FeimiEngine(dictionary: FeimiDictionary(chardefs: [
+            "a.": ["點"],
+            "b'": ["撇"],
+            "c[": ["括"]
+        ]))
+
+        XCTAssertEqual(engine.handle(.text("a.")).candidates.map(\.text), ["點"])
+        _ = engine.handle(.escape)
+        XCTAssertEqual(engine.handle(.text("b'")).candidates.map(\.text), ["撇"])
+        _ = engine.handle(.escape)
+        XCTAssertEqual(engine.handle(.text("c[")).candidates.map(\.text), ["括"])
+    }
+
     func testSpaceCommitsFirstCandidateAndClearsComposition() {
         var engine = FeimiEngine(dictionary: FeimiDictionary(chardefs: [
             "cl": ["中", "忠"]
