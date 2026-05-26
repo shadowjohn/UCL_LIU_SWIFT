@@ -36,3 +36,4 @@
 - 實作：肥米復古文字框改為長駐模式；啟用輸入法時會顯示空狀態肥框，送字、Esc、重新載入字典後回到空狀態而非關閉，切換輸入法時才收起；X 與 menu bar「隱藏文字框」會手動隱藏，menu bar「顯示文字框」可解除。
 - 實作：參考 UCL_LIU_CSharp / UCL_LIU tray，肥米文字框支援拖曳並保存位置；menu bar 改成舊版 tray 風格，含關於、正常/遊戲切換、出字模式、畫面調整、Ctrl+Space 英/肥切換、重新載入、使用者資料夾與離開；`Ctrl+Space` 由肥米內部攔截為英/肥切換，不交給 macOS 切輸入來源。
 - 決策：`wavs/` 音效檔可比照其他肥米版本簽入 repo；已從 `.gitignore` 移除並準備作為後續打字音效資源。
+- 修正：macOS build 失敗於 `isControlSpace(_:) -> Bool` 缺少明確 `return`；補上 return 並新增 regression check，避免 Ctrl+Space 判斷式再次因 Linux tests 不編 AppKit 而漏掉。

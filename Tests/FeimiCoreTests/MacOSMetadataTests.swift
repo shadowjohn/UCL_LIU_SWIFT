@@ -11,19 +11,18 @@ final class MacOSMetadataTests: XCTestCase {
         XCTAssertEqual(plist["TISInputSourceID"] as? String, "tw.3wa.UCL_LIU_SWIFT")
     }
 
+    func testControlSpacePredicateUsesExplicitReturn() throws {
+        let source = try String(contentsOf: macOSSourceURL("FeimiInputController.swift"))
+
+        XCTAssertTrue(source.contains("private func isControlSpace(_ event: NSEvent) -> Bool"))
+        XCTAssertTrue(source.contains("return event.keyCode == 49"))
+    }
+
     private func loadInfoPlist(
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> [String: Any] {
-        let testFileURL = URL(fileURLWithPath: String(describing: file))
-        let rootURL = testFileURL
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-        let plistURL = rootURL
-            .appendingPathComponent("macos")
-            .appendingPathComponent("UCL_LIU_SWIFT")
-            .appendingPathComponent("Info.plist")
+        let plistURL = macOSSourceURL("Info.plist", file: file)
         let data = try Data(contentsOf: plistURL)
         let plist = try PropertyListSerialization.propertyList(from: data, options: [], format: nil)
 
@@ -33,5 +32,19 @@ final class MacOSMetadataTests: XCTestCase {
         }
 
         return dictionary
+    }
+
+    private func macOSSourceURL(
+        _ pathComponent: String,
+        file: StaticString = #filePath
+    ) -> URL {
+        let testFileURL = URL(fileURLWithPath: String(describing: file))
+        return testFileURL
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("macos")
+            .appendingPathComponent("UCL_LIU_SWIFT")
+            .appendingPathComponent(pathComponent)
     }
 }

@@ -115,7 +115,7 @@ final class FeimiInputController: IMKInputController {
 
     private func isControlSpace(_ event: NSEvent) -> Bool {
         let blockedModifiers: NSEvent.ModifierFlags = [.command, .option]
-        event.keyCode == 49 &&
+        return event.keyCode == 49 &&
             event.modifierFlags.contains(.control) &&
             event.modifierFlags.intersection(blockedModifiers).isEmpty
     }
