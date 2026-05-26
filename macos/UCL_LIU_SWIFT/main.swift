@@ -143,4 +143,6 @@ guard let server = IMKServer(
 let feimiInputMethodServer = server
 _ = feimiInputMethodServer
 NSApplication.shared.setActivationPolicy(.accessory)
+let feimiStatusMenu = FeimiStatusMenu.shared
+_ = feimiStatusMenu
 _ = NSApplicationMain(CommandLine.argc, CommandLine.unsafeArgv)

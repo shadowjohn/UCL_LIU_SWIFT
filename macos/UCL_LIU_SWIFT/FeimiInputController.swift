@@ -7,9 +7,18 @@ final class FeimiInputController: IMKInputController {
         dictionary: FeimiDataStore.loadDictionary(),
         pinyiEngine: FeimiDataStore.loadPinyiEngine()
     )
+    private let displayFormatter = FeimiDisplayFormatter()
 
     override func recognizedEvents(_ sender: Any!) -> Int {
         Int(NSEvent.EventTypeMask.keyDown.rawValue)
+    }
+
+    override func activateServer(_ sender: Any!) {
+        FeimiLegacyPanel.shared.hide()
+    }
+
+    override func deactivateServer(_ sender: Any!) {
+        FeimiLegacyPanel.shared.hide()
     }
 
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
@@ -31,6 +40,8 @@ final class FeimiInputController: IMKInputController {
         if result.commitText == nil, result.command == nil {
             updateMarkedText(result, client: sender)
         }
+
+        updateLegacyPanel(result, client: sender)
 
         return true
     }
@@ -78,7 +89,7 @@ final class FeimiInputController: IMKInputController {
             return
         }
 
-        let text = markedText(for: result)
+        let text = result.composition
         let selection = NSRange(location: text.utf16.count, length: 0)
         client.setMarkedText(
             text as NSString,
@@ -100,18 +111,6 @@ final class FeimiInputController: IMKInputController {
         )
     }
 
-    private func markedText(for result: FeimiEngineResult) -> String {
-        let candidates = result.candidates.prefix(10).enumerated().map { index, candidate in
-            "\(index)\(candidate.text)"
-        }.joined(separator: " ")
-
-        guard !candidates.isEmpty else {
-            return result.composition
-        }
-
-        return "\(result.composition) \(candidates)"
-    }
-
     private func commit(_ text: String, client sender: Any!) {
         guard let client = sender as? IMKTextInput else {
             return
@@ -131,5 +130,24 @@ final class FeimiInputController: IMKInputController {
             NSSound.beep()
             NSLog("UCL_LIU_SWIFT: command not wired yet: \(command)")
         }
+    }
+
+    private func updateLegacyPanel(_ result: FeimiEngineResult, client sender: Any!) {
+        let state = displayFormatter.panelState(for: result)
+        FeimiLegacyPanel.shared.update(with: state, anchor: candidateAnchor(client: sender))
+    }
+
+    private func candidateAnchor(client sender: Any!) -> NSPoint? {
+        guard let client = sender as? IMKTextInput else {
+            return nil
+        }
+
+        var lineRect = NSRect.zero
+        _ = client.attributes(forCharacterIndex: 0, lineHeightRectangle: &lineRect)
+        guard !lineRect.isEmpty else {
+            return nil
+        }
+
+        return NSPoint(x: lineRect.minX, y: lineRect.minY)
     }
 }
