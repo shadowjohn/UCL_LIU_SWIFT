@@ -18,18 +18,12 @@ enum FeimiDataStore {
             NSLog("UCL_LIU_SWIFT: cannot create application support directory: \(error)")
         }
 
-        let cinURL = applicationSupportDirectory.appendingPathComponent("liu.cin")
-        guard let source = try? String(contentsOf: cinURL, encoding: .utf8) else {
-            NSLog("UCL_LIU_SWIFT: no liu.cin found at \(cinURL.path)")
-            return FeimiDictionary(chardefs: [:])
-        }
-
         do {
-            let chardefs = try CinParser().parse(source)
-            NSLog("UCL_LIU_SWIFT: loaded liu.cin with \(chardefs.count) codes")
-            return FeimiDictionary(chardefs: chardefs)
+            let result = try FeimiDictionaryLoader().load(from: applicationSupportDirectory)
+            NSLog("UCL_LIU_SWIFT: loaded dictionary from \(result.source.rawValue) with \(result.chardefs.count) codes")
+            return result.dictionary
         } catch {
-            NSLog("UCL_LIU_SWIFT: cannot parse liu.cin: \(error)")
+            NSLog("UCL_LIU_SWIFT: cannot load liu.json, liu.cin or liu-uni.tab: \(error)")
             return FeimiDictionary(chardefs: [:])
         }
     }

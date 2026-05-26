@@ -32,11 +32,19 @@ bash scripts/build-macos-input-method.sh
 bash scripts/install-macos-input-method.sh
 ```
 
-目前 scaffold 先從使用者資料目錄讀取 `liu.cin`：
+目前 scaffold 會從使用者資料目錄依序讀取：
+
+1. `liu.json`
+2. `liu.cin`，並產生 `liu.json` cache
+3. `liu-uni.tab`，並產生 `liu.cin` 與 `liu.json` cache
 
 ```sh
 mkdir -p "$HOME/Library/Application Support/UCL_LIU_SWIFT"
+cp /path/to/liu.json "$HOME/Library/Application Support/UCL_LIU_SWIFT/liu.json"
+# 或：
 cp /path/to/liu.cin "$HOME/Library/Application Support/UCL_LIU_SWIFT/liu.cin"
+# 或：
+cp /path/to/liu-uni.tab "$HOME/Library/Application Support/UCL_LIU_SWIFT/liu-uni.tab"
 ```
 
 重裝前 install script 會停止既有輸入法程序並移除舊版 app；也可手動執行：

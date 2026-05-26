@@ -20,4 +20,5 @@
 - 文件：新增 macOS 安裝、重裝、卸載與重設草案，明確標示 macOS app/installer 尚未實作，並記錄 `liu-uni.tab` 不隨 repo/installer 提供與 `,,,z`/`,,,x` 權限風險。
 - 決策：`0.01` 的 `,,,z`/`,,,x` 預設只走 IMK/text input client 直接選取範圍讀寫；剪貼簿 copy/paste fallback 需明確 opt-in，且 log 不記錄選取原文或轉換後文字。
 - 決策：沿用舊版肥米 0-based 候選選字規則；候選窗顯示 `0字 1字 ...`，空白與數字 `0` 送第一候選，數字 `1` 送第二候選。
-- 實作：新增 macOS InputMethodKit 最小外殼草案，包含 `IMKServer` 啟動、`FeimiInputController` 鍵盤事件轉接、`liu.cin` 使用者資料載入，以及 build/install/uninstall scripts；Windows 端已用 XML 檢查、Docker Swift 全套 22 tests 與 Docker bash `-n` scripts 語法檢查。
+- 實作：新增 macOS InputMethodKit 最小外殼草案，包含 `IMKServer` 啟動、`FeimiInputController` 鍵盤事件轉接、使用者資料目錄字典載入，以及 build/install/uninstall scripts；Windows 端已用 XML 檢查、Docker Swift 全套 22 tests 與 Docker bash `-n` scripts 語法檢查。
+- 實作：完成 `liu.json` / `liu.cin` / `liu-uni.tab` 載入鏈；`liu.json` 優先，`liu.cin` 會產生 `liu.json` cache，`liu-uni.tab` 會產生 `liu.cin` 與 `liu.json` cache；測試使用人工合成 tab bytes，未簽入有版權字根。
