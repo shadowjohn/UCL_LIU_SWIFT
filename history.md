@@ -24,3 +24,4 @@
 - 實作：完成 `liu.json` / `liu.cin` / `liu-uni.tab` 載入鏈；`liu.json` 優先，`liu.cin` 會產生 `liu.json` cache，`liu-uni.tab` 會產生 `liu.cin` 與 `liu.json` cache；測試使用人工合成 tab bytes，未簽入有版權字根。
 - 修正：macOS key handling 允許肥米字根常用 punctuation keys `,.'[]+-`，避免只有 a-z 與逗號可進入組字 buffer。
 - 實作：`FeimiEngine` 接上 `PinyiEngine`，支援 `'pns` 這類 pinyi key 候選與以單字反查同音候選；macOS 外殼會讀使用者資料夾 `pinyi.txt`，沒有時使用 bundle 內建 `pinyi.txt`。
+- 文件：參考 `UCL_LIU_CSharp` README 結構新增 macOS Swift 版 `README.md`，涵蓋專案定位、安裝/卸載、字根檔政策、使用方式、指令、權限隱私、開發與已知限制。
