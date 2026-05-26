@@ -31,3 +31,4 @@
 - 修正：macOS 輸入法 plist 改用合法且含 `inputmethod` 的 bundle id `tw.3wa.inputmethod.UCL-LIU-SWIFT`，輸入來源 id 固定為 `tw.3wa.UCL_LIU_SWIFT`；補上 `LSBackgroundOnly`、`ComponentInputModeDict` 與 icon key，並在註冊後查不到輸入來源時輸出附近 TIS 診斷。
 - 修正：對照 `y1lichen/ilimi-inputmethod` 後，macOS plist 改回 top-level TIS input source 設定並補齊一粒米使用的 visibility/menu icon/Touch Bar/caps-lock 等 key；註冊查找改為掃全部 TIS sources 並同時比對 input source id 與 input mode id；build/install script 會嘗試 ad-hoc codesign 與 lsregister。
 - 實作：新增復古肥米浮動候選窗與 macOS menu bar「肥」status item；候選窗顯示 `肥`、`半`、目前輸入碼、`0候選 1候選 ...` 與 `正常模式`，送字、Esc、切換輸入法時會收起；新增 `FeimiDisplayFormatter` 與測試固定顯示格式。
+- 實作：接上復古浮動窗控制指令，`,,,lock` / `,,,unlock` 會切換正常/遊戲模式，`,,,s` / `,,,l` 會調整候選窗寬度，`,,,+` / `,,,-` 會調整縮放並保存；menu bar 新增顯示/隱藏文字框與重新載入字典/pinyi；確認指令執行後會清空組字狀態。

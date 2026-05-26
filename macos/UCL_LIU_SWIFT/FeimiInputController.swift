@@ -8,6 +8,21 @@ final class FeimiInputController: IMKInputController {
         pinyiEngine: FeimiDataStore.loadPinyiEngine()
     )
     private let displayFormatter = FeimiDisplayFormatter()
+    private var isGameMode = false
+
+    override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!) {
+        super.init(server: server, delegate: delegate, client: inputClient)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reloadData),
+            name: .feimiReloadData,
+            object: nil
+        )
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 
     override func recognizedEvents(_ sender: Any!) -> Int {
         Int(NSEvent.EventTypeMask.keyDown.rawValue)
@@ -33,15 +48,19 @@ final class FeimiInputController: IMKInputController {
             commit(commitText, client: sender)
         }
 
+        var commandWasHandled = false
         if let command = result.command {
             handle(command, client: sender)
+            commandWasHandled = true
         }
 
         if result.commitText == nil, result.command == nil {
             updateMarkedText(result, client: sender)
         }
 
-        updateLegacyPanel(result, client: sender)
+        if !commandWasHandled {
+            updateLegacyPanel(result, client: sender)
+        }
 
         return true
     }
@@ -126,6 +145,25 @@ final class FeimiInputController: IMKInputController {
         switch command {
         case .version:
             commit("UCL_LIU_SWIFT 0.01", client: sender)
+            FeimiLegacyPanel.shared.hide()
+        case .lock:
+            isGameMode = true
+            showStatusPanel(client: sender)
+        case .unlock:
+            isGameMode = false
+            showStatusPanel(client: sender)
+        case .narrow:
+            FeimiLegacyPanel.shared.setNarrowLayout()
+            showStatusPanel(client: sender)
+        case .wide:
+            FeimiLegacyPanel.shared.setWideLayout()
+            showStatusPanel(client: sender)
+        case .larger:
+            FeimiLegacyPanel.shared.increaseScale()
+            showStatusPanel(client: sender)
+        case .smaller:
+            FeimiLegacyPanel.shared.decreaseScale()
+            showStatusPanel(client: sender)
         default:
             NSSound.beep()
             NSLog("UCL_LIU_SWIFT: command not wired yet: \(command)")
@@ -133,8 +171,29 @@ final class FeimiInputController: IMKInputController {
     }
 
     private func updateLegacyPanel(_ result: FeimiEngineResult, client sender: Any!) {
-        let state = displayFormatter.panelState(for: result)
+        let state = displayFormatter.panelState(for: result, isGameMode: isGameMode)
         FeimiLegacyPanel.shared.update(with: state, anchor: candidateAnchor(client: sender))
+    }
+
+    private func showStatusPanel(client sender: Any!) {
+        let state = FeimiPanelState(
+            inputModeLabel: "肥",
+            widthModeLabel: "半",
+            compositionLabel: "",
+            candidateLabel: "",
+            commandModeLabel: isGameMode ? "遊戲模式" : "正常模式",
+            shouldShowPanel: true
+        )
+        FeimiLegacyPanel.shared.update(with: state, anchor: candidateAnchor(client: sender))
+    }
+
+    @objc private func reloadData() {
+        engine = FeimiEngine(
+            dictionary: FeimiDataStore.loadDictionary(),
+            pinyiEngine: FeimiDataStore.loadPinyiEngine()
+        )
+        FeimiLegacyPanel.shared.hide()
+        NSLog("UCL_LIU_SWIFT: reloaded dictionary and pinyi data")
     }
 
     private func candidateAnchor(client sender: Any!) -> NSPoint? {

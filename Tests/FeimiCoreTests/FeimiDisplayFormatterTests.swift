@@ -31,6 +31,14 @@ final class FeimiDisplayFormatterTests: XCTestCase {
         XCTAssertEqual(state.candidateLabel, "")
     }
 
+    func testFormatsGameModeLabel() {
+        let result = FeimiEngineResult(composition: "abc", candidates: [])
+
+        let state = FeimiDisplayFormatter().panelState(for: result, isGameMode: true)
+
+        XCTAssertEqual(state.commandModeLabel, "遊戲模式")
+    }
+
     func testLimitsCandidateTextToTenItems() {
         let candidates = (0..<12).map { index in
             Candidate(text: "\(index)", code: "abc", index: index)

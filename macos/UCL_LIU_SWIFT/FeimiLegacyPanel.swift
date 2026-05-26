@@ -3,6 +3,11 @@ import AppKit
 final class FeimiLegacyPanel {
     static let shared = FeimiLegacyPanel()
 
+    private enum DefaultsKey {
+        static let scale = "FeimiLegacyPanel.scale"
+        static let candidateWidth = "FeimiLegacyPanel.candidateWidth"
+    }
+
     private let inputModeLabel = FeimiPanelCell(width: 40, alignment: .center)
     private let widthModeLabel = FeimiPanelCell(width: 40, alignment: .center)
     private let compositionLabel = FeimiPanelCell(width: 150, alignment: .left)
@@ -10,8 +15,17 @@ final class FeimiLegacyPanel {
     private let commandModeLabel = FeimiPanelCell(width: 120, alignment: .center)
     private let closeButton = NSButton(title: "╳", target: nil, action: nil)
     private lazy var panel: NSPanel = makePanel()
+    private var closeButtonWidthConstraint: NSLayoutConstraint?
+    private var closeButtonHeightConstraint: NSLayoutConstraint?
+    private var scale: CGFloat
+    private var candidateWidth: CGFloat
 
-    private init() {}
+    private init() {
+        let savedScale = UserDefaults.standard.double(forKey: DefaultsKey.scale)
+        let savedCandidateWidth = UserDefaults.standard.double(forKey: DefaultsKey.candidateWidth)
+        self.scale = savedScale > 0 ? savedScale : 1
+        self.candidateWidth = savedCandidateWidth > 0 ? savedCandidateWidth : 360
+    }
 
     func update(with state: FeimiPanelState, anchor: NSPoint?) {
         DispatchQueue.main.async {
@@ -26,7 +40,7 @@ final class FeimiLegacyPanel {
             self.candidateLabel.stringValue = state.candidateLabel
             self.commandModeLabel.stringValue = state.commandModeLabel
 
-            self.panel.contentView?.layoutSubtreeIfNeeded()
+            self.applyPanelMetrics()
             self.panel.setFrameOrigin(self.panelOrigin(anchor: anchor))
             self.panel.orderFrontRegardless()
         }
@@ -35,6 +49,38 @@ final class FeimiLegacyPanel {
     func hide() {
         DispatchQueue.main.async {
             self.panel.orderOut(nil)
+        }
+    }
+
+    func setWideLayout() {
+        DispatchQueue.main.async {
+            self.candidateWidth = 520
+            self.saveMetrics()
+            self.applyPanelMetrics()
+        }
+    }
+
+    func setNarrowLayout() {
+        DispatchQueue.main.async {
+            self.candidateWidth = 260
+            self.saveMetrics()
+            self.applyPanelMetrics()
+        }
+    }
+
+    func increaseScale() {
+        DispatchQueue.main.async {
+            self.scale = min(self.scale + 0.1, 1.8)
+            self.saveMetrics()
+            self.applyPanelMetrics()
+        }
+    }
+
+    func decreaseScale() {
+        DispatchQueue.main.async {
+            self.scale = max(self.scale - 0.1, 0.8)
+            self.saveMetrics()
+            self.applyPanelMetrics()
         }
     }
 
@@ -65,8 +111,6 @@ final class FeimiLegacyPanel {
         closeButton.target = self
         closeButton.action = #selector(closeButtonClicked)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
-        closeButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        closeButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
 
         [
             inputModeLabel,
@@ -91,7 +135,36 @@ final class FeimiLegacyPanel {
             stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
 
+        applyPanelMetrics(to: panel)
         return panel
+    }
+
+    private func applyPanelMetrics(to targetPanel: NSPanel? = nil) {
+        inputModeLabel.set(width: 40 * scale, fontSize: 16 * scale, height: 40 * scale)
+        widthModeLabel.set(width: 40 * scale, fontSize: 16 * scale, height: 40 * scale)
+        compositionLabel.set(width: 150 * scale, fontSize: 18 * scale, height: 40 * scale)
+        candidateLabel.set(width: candidateWidth * scale, fontSize: 18 * scale, height: 40 * scale)
+        commandModeLabel.set(width: 120 * scale, fontSize: 14 * scale, height: 40 * scale)
+        closeButton.font = NSFont.boldSystemFont(ofSize: 16 * scale)
+
+        let buttonSide = 40 * scale
+        closeButtonWidthConstraint?.isActive = false
+        closeButtonHeightConstraint?.isActive = false
+        closeButtonWidthConstraint = closeButton.widthAnchor.constraint(equalToConstant: buttonSide)
+        closeButtonHeightConstraint = closeButton.heightAnchor.constraint(equalToConstant: buttonSide)
+        closeButtonWidthConstraint?.isActive = true
+        closeButtonHeightConstraint?.isActive = true
+
+        let width = (40 + 40 + 150 + candidateWidth + 120 + 40) * scale + 4
+        let height = 40 * scale + 2
+        let activePanel = targetPanel ?? panel
+        activePanel.setContentSize(NSSize(width: width, height: height))
+        activePanel.contentView?.layoutSubtreeIfNeeded()
+    }
+
+    private func saveMetrics() {
+        UserDefaults.standard.set(Double(scale), forKey: DefaultsKey.scale)
+        UserDefaults.standard.set(Double(candidateWidth), forKey: DefaultsKey.candidateWidth)
     }
 
     private func panelOrigin(anchor: NSPoint?) -> NSPoint {
@@ -117,6 +190,9 @@ final class FeimiLegacyPanel {
 }
 
 private final class FeimiPanelCell: NSTextField {
+    private var widthConstraint: NSLayoutConstraint?
+    private var heightConstraint: NSLayoutConstraint?
+
     init(width: CGFloat, alignment: NSTextAlignment) {
         super.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
@@ -132,8 +208,17 @@ private final class FeimiPanelCell: NSTextField {
         layer?.borderColor = NSColor.separatorColor.cgColor
         layer?.borderWidth = 1
         self.alignment = alignment
-        widthAnchor.constraint(equalToConstant: width).isActive = true
-        heightAnchor.constraint(equalToConstant: 40).isActive = true
+        set(width: width, fontSize: 18, height: 40)
+    }
+
+    func set(width: CGFloat, fontSize: CGFloat, height: CGFloat) {
+        widthConstraint?.isActive = false
+        heightConstraint?.isActive = false
+        widthConstraint = widthAnchor.constraint(equalToConstant: width)
+        heightConstraint = heightAnchor.constraint(equalToConstant: height)
+        widthConstraint?.isActive = true
+        heightConstraint?.isActive = true
+        font = NSFont.boldSystemFont(ofSize: fontSize)
     }
 
     @available(*, unavailable)

@@ -21,8 +21,24 @@ final class FeimiStatusMenu: NSObject {
         menu.addItem(NSMenuItem(title: "UCL_LIU_SWIFT 0.01", action: nil, keyEquivalent: ""))
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(
+            title: "顯示文字框",
+            action: #selector(showLegacyPanel),
+            keyEquivalent: ""
+        ))
+        menu.addItem(NSMenuItem(
+            title: "隱藏文字框",
+            action: #selector(hideLegacyPanel),
+            keyEquivalent: ""
+        ))
+        menu.addItem(.separator())
+        menu.addItem(NSMenuItem(
             title: "開啟使用者資料夾",
             action: #selector(openApplicationSupportDirectory),
+            keyEquivalent: ""
+        ))
+        menu.addItem(NSMenuItem(
+            title: "重新載入字典",
+            action: #selector(reloadData),
             keyEquivalent: ""
         ))
         menu.addItem(NSMenuItem(
@@ -40,6 +56,22 @@ final class FeimiStatusMenu: NSObject {
         statusItem.menu = menu
     }
 
+    @objc private func showLegacyPanel() {
+        let state = FeimiPanelState(
+            inputModeLabel: "肥",
+            widthModeLabel: "半",
+            compositionLabel: "",
+            candidateLabel: "",
+            commandModeLabel: "正常模式",
+            shouldShowPanel: true
+        )
+        FeimiLegacyPanel.shared.update(with: state, anchor: nil)
+    }
+
+    @objc private func hideLegacyPanel() {
+        FeimiLegacyPanel.shared.hide()
+    }
+
     @objc private func openApplicationSupportDirectory() {
         do {
             try FileManager.default.createDirectory(
@@ -51,6 +83,10 @@ final class FeimiStatusMenu: NSObject {
             NSSound.beep()
             NSLog("UCL_LIU_SWIFT: cannot open application support directory: \(error)")
         }
+    }
+
+    @objc private func reloadData() {
+        NotificationCenter.default.post(name: .feimiReloadData, object: nil)
     }
 
     @objc private func showAbout() {
