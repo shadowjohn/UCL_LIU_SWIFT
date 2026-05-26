@@ -62,7 +62,7 @@ The following are not required for `0.01`:
 - AI association, cloud dictionary, sync, or large-model features.
 - Full custom phrase UI.
 - Polished installer UX beyond a workable install/build flow.
-- Sound effects. `wavs/` is local reference material only for now.
+- Sound effects are in scope later; `wavs/` is committed as shared project audio assets.
 
 ## Repository Resource Policy
 
@@ -72,7 +72,7 @@ The following are not required for `0.01`:
 
 `liu.json` and `liu.cin` should also be treated carefully when produced from user-provided copyrighted sources. Development tests should use tiny synthetic fixtures, not the full proprietary dictionary.
 
-`wavs/` is local reference material for future sound effects and should not be committed in `0.01`.
+`wavs/` is committed as shared project audio assets for future sound effects.
 
 ## Architecture
 
@@ -392,7 +392,7 @@ The following choices are intentionally fixed for `0.01`:
 - AppKit candidate UI.
 - `pinyi.txt` built in.
 - `liu-uni.tab` never committed.
-- `wavs/` not committed for `0.01`.
+- `wavs/` committed as project audio assets.
 - `,,,z` and `,,,x` included in `0.01`.
 
 No unresolved product decision blocks implementation planning.

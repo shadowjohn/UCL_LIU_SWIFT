@@ -4,7 +4,7 @@
 
 - 決策：`liu-uni.tab` 為有版權字根檔，只能作為本機參考/測試資料，不可簽入 repo；已加入 `.gitignore` 避免誤提交。
 - 參考來源：Python 版 `D:\GD\UCL_LIU` 作為完整流程參考；C# 版 `D:\mytools\UCL_LIU_CSharp` 作為精簡可用行為參考；`y1lichen/ilimi-inputmethod` 作為 macOS InputMethodKit 架構參考。
-- 決策：`pinyi.txt` 可作為 0.01 版內建資源；`wavs/` 打字音效先作為本機參考，不簽入 repo。
+- 決策：`pinyi.txt` 可作為 0.01 版內建資源；`wavs/` 打字音效當時先暫緩簽入，後續決策見下方。
 - 工作規則：開發期間每完成一段可理解的功能、規格或修正，就建立小而清楚的 git commit。
 - 決策：`0.01` 版需納入 `,,,z` 框選文章轉字根與 `,,,x` 框選字根轉文章；規格需明確處理 macOS 剪貼簿與權限風險。
 - 設計調整：`,,,z` / `,,,x` 優先嘗試 macOS text input client 的選取範圍、substring 與 replacement API；剪貼簿與模擬 copy/paste 只作為 fallback。
@@ -35,3 +35,4 @@
 - 修正：macOS 輸入法顯示名稱改為「肥米」，保留 executable、bundle id 與 input source id 的技術識別值，避免影響既有註冊流程；menu bar、關於視窗與安裝提示同步改用「肥米」。
 - 實作：肥米復古文字框改為長駐模式；啟用輸入法時會顯示空狀態肥框，送字、Esc、重新載入字典後回到空狀態而非關閉，切換輸入法時才收起；X 與 menu bar「隱藏文字框」會手動隱藏，menu bar「顯示文字框」可解除。
 - 實作：參考 UCL_LIU_CSharp / UCL_LIU tray，肥米文字框支援拖曳並保存位置；menu bar 改成舊版 tray 風格，含關於、正常/遊戲切換、出字模式、畫面調整、Ctrl+Space 英/肥切換、重新載入、使用者資料夾與離開；`Ctrl+Space` 由肥米內部攔截為英/肥切換，不交給 macOS 切輸入來源。
+- 決策：`wavs/` 音效檔可比照其他肥米版本簽入 repo；已從 `.gitignore` 移除並準備作為後續打字音效資源。

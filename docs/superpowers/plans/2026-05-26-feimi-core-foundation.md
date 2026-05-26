@@ -24,7 +24,6 @@ Expected ignored local reference files:
 
 ```text
 liu-uni.tab
-wavs/
 .superpowers/
 ```
 

@@ -266,7 +266,7 @@ Tests/FeimiCoreTests/
 - macOS 實機 App 相容性仍需測 TextEdit、Safari、Chrome、VS Code、Terminal 等。
 - `,,,lock` / `,,,unlock` 等模式目前 core 已辨識，外殼行為仍需補齊。
 - `,,,z` / `,,,x` 需要 macOS 權限與選取文字流程實測。
-- 音效 `wavs/` 目前只是本機參考，不隨 `0.01` 簽入。
+- 音效 `wavs/` 已隨 repo 簽入，供後續接上打字音使用。
 
 ## 參考資料
 

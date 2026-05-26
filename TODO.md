@@ -145,13 +145,13 @@
 - [ ] user phrase / custom dictionary。
 - [ ] 使用者詞頻或排序調整。
 - [ ] theme.json。
-- [ ] 音效設定，評估 `wavs/` 是否可合法散布。
+- [ ] 音效設定，接上已簽入的 `wavs/` 打字音。
 - [ ] 更完整的錯誤提示與診斷頁。
 
 ## 開發提醒
 
 - `liu-uni.tab` 不可簽入。
-- `wavs/` 目前不簽入。
+- `wavs/` 可簽入；後續接打字音時直接使用 repo 內音效。
 - 任何從正版字根轉出的完整 `liu.cin` / `liu.json` 不簽入。
 - 每完成一段功能、修正、決策或踩雷紀錄，要更新 `history.md` 並 commit。
 - macOS 實機 build / install 的結果要回寫本檔與 `history.md`。
