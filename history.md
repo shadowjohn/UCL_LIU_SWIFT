@@ -23,3 +23,4 @@
 - 實作：新增 macOS InputMethodKit 最小外殼草案，包含 `IMKServer` 啟動、`FeimiInputController` 鍵盤事件轉接、使用者資料目錄字典載入，以及 build/install/uninstall scripts；Windows 端已用 XML 檢查、Docker Swift 全套 22 tests 與 Docker bash `-n` scripts 語法檢查。
 - 實作：完成 `liu.json` / `liu.cin` / `liu-uni.tab` 載入鏈；`liu.json` 優先，`liu.cin` 會產生 `liu.json` cache，`liu-uni.tab` 會產生 `liu.cin` 與 `liu.json` cache；測試使用人工合成 tab bytes，未簽入有版權字根。
 - 修正：macOS key handling 允許肥米字根常用 punctuation keys `,.'[]+-`，避免只有 a-z 與逗號可進入組字 buffer。
+- 實作：`FeimiEngine` 接上 `PinyiEngine`，支援 `'pns` 這類 pinyi key 候選與以單字反查同音候選；macOS 外殼會讀使用者資料夾 `pinyi.txt`，沒有時使用 bundle 內建 `pinyi.txt`。

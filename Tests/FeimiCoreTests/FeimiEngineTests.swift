@@ -32,6 +32,42 @@ final class FeimiEngineTests: XCTestCase {
         XCTAssertEqual(engine.handle(.text("c[")).candidates.map(\.text), ["括"])
     }
 
+    func testApostrophePinyiQueryUsesPinyiCandidates() throws {
+        let pinyi = try PinyiEngine(source: """
+        VERSION_0.01
+        a b c
+        ㄅ ㄆ ㄇ
+        pns 你 妳 擬
+        abc 肥 淝
+        """)
+        var engine = FeimiEngine(
+            dictionary: FeimiDictionary(chardefs: [:]),
+            pinyiEngine: pinyi
+        )
+
+        let result = engine.handle(.text("'pns"))
+
+        XCTAssertEqual(result.composition, "'pns")
+        XCTAssertEqual(result.candidates.map(\.text), ["你", "妳", "擬"])
+    }
+
+    func testApostropheChineseCharacterQueryFallsBackToSameSoundCandidates() throws {
+        let pinyi = try PinyiEngine(source: """
+        VERSION_0.01
+        a b c
+        ㄅ ㄆ ㄇ
+        pns 你 妳 擬
+        """)
+        var engine = FeimiEngine(
+            dictionary: FeimiDictionary(chardefs: [:]),
+            pinyiEngine: pinyi
+        )
+
+        let result = engine.handle(.text("'你"))
+
+        XCTAssertEqual(result.candidates.map(\.text), ["你", "妳", "擬"])
+    }
+
     func testSpaceCommitsFirstCandidateAndClearsComposition() {
         var engine = FeimiEngine(dictionary: FeimiDictionary(chardefs: [
             "cl": ["中", "忠"]

@@ -28,12 +28,18 @@ public struct FeimiEngineResult: Equatable, Sendable {
 
 public struct FeimiEngine: Sendable {
     private let dictionary: FeimiDictionary
+    private let pinyiEngine: PinyiEngine?
     private let commandProcessor: CommandProcessor
     private var buffer: String
     private var candidates: [Candidate]
 
-    public init(dictionary: FeimiDictionary, commandProcessor: CommandProcessor = CommandProcessor()) {
+    public init(
+        dictionary: FeimiDictionary,
+        pinyiEngine: PinyiEngine? = nil,
+        commandProcessor: CommandProcessor = CommandProcessor()
+    ) {
         self.dictionary = dictionary
+        self.pinyiEngine = pinyiEngine
         self.commandProcessor = commandProcessor
         self.buffer = ""
         self.candidates = []
@@ -118,11 +124,34 @@ public struct FeimiEngine: Sendable {
     }
 
     private mutating func refreshCandidates() {
-        candidates = dictionary.lookup(buffer)
+        if let pinyiCandidates = lookupPinyiCandidates() {
+            candidates = pinyiCandidates
+        } else {
+            candidates = dictionary.lookup(buffer)
+        }
     }
 
     private mutating func clear() {
         buffer = ""
         candidates = []
+    }
+
+    private func lookupPinyiCandidates() -> [Candidate]? {
+        guard let pinyiEngine,
+              buffer.hasPrefix("'") else {
+            return nil
+        }
+
+        let query = String(buffer.dropFirst())
+        guard !query.isEmpty else {
+            return []
+        }
+
+        let words = pinyiEngine.zhuyinCandidates(for: query)
+        let fallbackWords = words.isEmpty ? pinyiEngine.sameSoundCandidates(containing: query) : words
+
+        return fallbackWords.enumerated().map { index, text in
+            Candidate(text: text, code: buffer, index: index)
+        }
     }
 }

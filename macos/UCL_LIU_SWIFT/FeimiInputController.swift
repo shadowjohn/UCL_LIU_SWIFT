@@ -3,7 +3,10 @@ import InputMethodKit
 
 @objc(FeimiInputController)
 final class FeimiInputController: IMKInputController {
-    private var engine = FeimiEngine(dictionary: FeimiDataStore.loadDictionary())
+    private var engine = FeimiEngine(
+        dictionary: FeimiDataStore.loadDictionary(),
+        pinyiEngine: FeimiDataStore.loadPinyiEngine()
+    )
 
     override func recognizedEvents(_ sender: Any!) -> Int {
         Int(NSEvent.EventTypeMask.keyDown.rawValue)

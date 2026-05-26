@@ -27,4 +27,26 @@ enum FeimiDataStore {
             return FeimiDictionary(chardefs: [:])
         }
     }
+
+    static func loadPinyiEngine() -> PinyiEngine? {
+        let userPinyiURL = applicationSupportDirectory.appendingPathComponent("pinyi.txt")
+        let bundledPinyiURL = Bundle.main.url(forResource: "pinyi", withExtension: "txt")
+
+        for url in [userPinyiURL, bundledPinyiURL].compactMap({ $0 }) {
+            guard let source = try? String(contentsOf: url, encoding: .utf8) else {
+                continue
+            }
+
+            do {
+                let engine = try PinyiEngine(source: source)
+                NSLog("UCL_LIU_SWIFT: loaded pinyi.txt from \(url.path)")
+                return engine
+            } catch {
+                NSLog("UCL_LIU_SWIFT: cannot parse pinyi.txt at \(url.path): \(error)")
+            }
+        }
+
+        NSLog("UCL_LIU_SWIFT: no usable pinyi.txt found")
+        return nil
+    }
 }
