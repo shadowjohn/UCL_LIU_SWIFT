@@ -38,3 +38,4 @@
 - 決策：`wavs/` 音效檔可比照其他肥米版本簽入 repo；已從 `.gitignore` 移除並準備作為後續打字音效資源。
 - 修正：macOS build 失敗於 `isControlSpace(_:) -> Bool` 缺少明確 `return`；補上 return 並新增 regression check，避免 Ctrl+Space 判斷式再次因 Linux tests 不編 AppKit 而漏掉。
 - 決策：`0.01` 字根匯入先採手動選檔為主；第一次找不到字根時提示使用者選取合法來源的 `liu-uni.tab` / `.cin` / `.json` 或開啟使用者資料夾，替換既有字根/cache 前先備份，暫不掃描官蝦安裝路徑。
+- 修正：macOS build 失敗於復古文字框拖曳 callback；`[weak self]` 單行 closure 會被推成 `() -> Void?`，已將 begin/drag/end 三個 callback 明確標成 `() -> Void` 並補 source regression check。

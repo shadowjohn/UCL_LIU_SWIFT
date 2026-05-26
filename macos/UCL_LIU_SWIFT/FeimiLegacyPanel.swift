@@ -136,9 +136,15 @@ final class FeimiLegacyPanel {
         panel.isOpaque = true
         panel.hasShadow = true
 
-        let beginDrag = { [weak self] in self?.beginDraggingPanel() }
-        let drag = { [weak self] in self?.dragPanel() }
-        let endDrag = { [weak self] in self?.endDraggingPanel() }
+        let beginDrag: () -> Void = { [weak self] in
+            self?.beginDraggingPanel()
+        }
+        let drag: () -> Void = { [weak self] in
+            self?.dragPanel()
+        }
+        let endDrag: () -> Void = { [weak self] in
+            self?.endDraggingPanel()
+        }
         [
             inputModeLabel,
             widthModeLabel,

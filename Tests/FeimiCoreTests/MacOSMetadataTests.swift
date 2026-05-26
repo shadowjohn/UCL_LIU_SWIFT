@@ -18,6 +18,14 @@ final class MacOSMetadataTests: XCTestCase {
         XCTAssertTrue(source.contains("return event.keyCode == 49"))
     }
 
+    func testLegacyPanelMouseCallbacksReturnVoid() throws {
+        let source = try String(contentsOf: macOSSourceURL("FeimiLegacyPanel.swift"))
+
+        XCTAssertTrue(source.contains("let beginDrag: () -> Void"))
+        XCTAssertTrue(source.contains("let drag: () -> Void"))
+        XCTAssertTrue(source.contains("let endDrag: () -> Void"))
+    }
+
     private func loadInfoPlist(
         file: StaticString = #filePath,
         line: UInt = #line
