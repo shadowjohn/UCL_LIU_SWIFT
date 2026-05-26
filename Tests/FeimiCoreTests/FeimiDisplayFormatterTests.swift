@@ -52,6 +52,19 @@ final class FeimiDisplayFormatterTests: XCTestCase {
         XCTAssertEqual(state.commandModeLabel, "遊戲模式")
     }
 
+    func testFormatsEnglishModeLabel() {
+        let result = FeimiEngineResult(composition: "", candidates: [])
+
+        let state = FeimiDisplayFormatter().panelState(
+            for: result,
+            isFeimiMode: false,
+            keepsPanelVisible: true
+        )
+
+        XCTAssertEqual(state.inputModeLabel, "英")
+        XCTAssertTrue(state.shouldShowPanel)
+    }
+
     func testLimitsCandidateTextToTenItems() {
         let candidates = (0..<12).map { index in
             Candidate(text: "\(index)", code: "abc", index: index)

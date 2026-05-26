@@ -8,7 +8,6 @@ final class FeimiInputController: IMKInputController {
         pinyiEngine: FeimiDataStore.loadPinyiEngine()
     )
     private let displayFormatter = FeimiDisplayFormatter()
-    private var isGameMode = false
 
     override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!) {
         super.init(server: server, delegate: delegate, client: inputClient)
@@ -37,7 +36,23 @@ final class FeimiInputController: IMKInputController {
     }
 
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
-        guard event.type == .keyDown, let input = feimiInput(from: event) else {
+        guard event.type == .keyDown else {
+            return false
+        }
+
+        if isControlSpace(event) {
+            let cleared = engine.handle(.escape)
+            clearMarkedTextIfNeeded(cleared, client: sender)
+            FeimiRuntimeState.shared.toggleFeimiMode()
+            showStatusPanel(client: sender, revealsUserHiddenPanel: true)
+            return true
+        }
+
+        guard FeimiRuntimeState.shared.isFeimiMode else {
+            return false
+        }
+
+        guard let input = feimiInput(from: event) else {
             return false
         }
 
@@ -98,6 +113,13 @@ final class FeimiInputController: IMKInputController {
         return characters.isEmpty ? nil : .text(characters)
     }
 
+    private func isControlSpace(_ event: NSEvent) -> Bool {
+        let blockedModifiers: NSEvent.ModifierFlags = [.command, .option]
+        event.keyCode == 49 &&
+            event.modifierFlags.contains(.control) &&
+            event.modifierFlags.intersection(blockedModifiers).isEmpty
+    }
+
     private func isAllowedCompositionCharacter(_ character: Character) -> Bool {
         character.isLetter || ",.'[]+-".contains(character)
     }
@@ -147,10 +169,10 @@ final class FeimiInputController: IMKInputController {
             commit("肥米 0.01", client: sender)
             showStatusPanel(client: sender)
         case .lock:
-            isGameMode = true
+            FeimiRuntimeState.shared.setGameMode(true)
             showStatusPanel(client: sender)
         case .unlock:
-            isGameMode = false
+            FeimiRuntimeState.shared.setGameMode(false)
             showStatusPanel(client: sender)
         case .narrow:
             FeimiLegacyPanel.shared.setNarrowLayout()
@@ -174,7 +196,8 @@ final class FeimiInputController: IMKInputController {
     private func updateLegacyPanel(_ result: FeimiEngineResult, client sender: Any!) {
         let state = displayFormatter.panelState(
             for: result,
-            isGameMode: isGameMode,
+            isFeimiMode: FeimiRuntimeState.shared.isFeimiMode,
+            isGameMode: FeimiRuntimeState.shared.isGameMode,
             keepsPanelVisible: true
         )
         FeimiLegacyPanel.shared.update(with: state, anchor: candidateAnchor(client: sender))
@@ -199,11 +222,11 @@ final class FeimiInputController: IMKInputController {
 
     private func idlePanelState() -> FeimiPanelState {
         FeimiPanelState(
-            inputModeLabel: "肥",
+            inputModeLabel: FeimiRuntimeState.shared.isFeimiMode ? "肥" : "英",
             widthModeLabel: "半",
             compositionLabel: "",
             candidateLabel: "",
-            commandModeLabel: isGameMode ? "遊戲模式" : "正常模式",
+            commandModeLabel: FeimiRuntimeState.shared.isGameMode ? "遊戲模式" : "正常模式",
             shouldShowPanel: true
         )
     }

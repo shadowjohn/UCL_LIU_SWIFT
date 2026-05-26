@@ -6,6 +6,9 @@ final class FeimiLegacyPanel {
     private enum DefaultsKey {
         static let scale = "FeimiLegacyPanel.scale"
         static let candidateWidth = "FeimiLegacyPanel.candidateWidth"
+        static let hasManualOrigin = "FeimiLegacyPanel.hasManualOrigin"
+        static let manualOriginX = "FeimiLegacyPanel.manualOriginX"
+        static let manualOriginY = "FeimiLegacyPanel.manualOriginY"
     }
 
     private let inputModeLabel = FeimiPanelCell(width: 40, alignment: .center)
@@ -20,12 +23,26 @@ final class FeimiLegacyPanel {
     private var scale: CGFloat
     private var candidateWidth: CGFloat
     private var isHiddenByUser = false
+    private var manualOrigin: NSPoint?
+    private var dragStartMouseLocation: NSPoint?
+    private var dragStartPanelOrigin: NSPoint?
 
     private init() {
         let savedScale = UserDefaults.standard.double(forKey: DefaultsKey.scale)
         let savedCandidateWidth = UserDefaults.standard.double(forKey: DefaultsKey.candidateWidth)
-        self.scale = savedScale > 0 ? savedScale : 1
-        self.candidateWidth = savedCandidateWidth > 0 ? savedCandidateWidth : 360
+        let defaults = UserDefaults.standard
+        self.scale = savedScale > 0 ? CGFloat(savedScale) : 1
+        if savedCandidateWidth > 0 {
+            self.candidateWidth = CGFloat(savedCandidateWidth)
+        } else {
+            self.candidateWidth = CGFloat(FeimiPanelLayout.defaultCandidateWidth)
+        }
+        if defaults.bool(forKey: DefaultsKey.hasManualOrigin) {
+            self.manualOrigin = NSPoint(
+                x: defaults.double(forKey: DefaultsKey.manualOriginX),
+                y: defaults.double(forKey: DefaultsKey.manualOriginY)
+            )
+        }
     }
 
     func update(
@@ -68,9 +85,13 @@ final class FeimiLegacyPanel {
         }
     }
 
+    func isNarrowLayoutEnabled() -> Bool {
+        candidateWidth <= CGFloat(FeimiPanelLayout.narrowCandidateWidth)
+    }
+
     func setWideLayout() {
         DispatchQueue.main.async {
-            self.candidateWidth = 520
+            self.candidateWidth = CGFloat(FeimiPanelLayout.wideCandidateWidth)
             self.saveMetrics()
             self.applyPanelMetrics()
         }
@@ -78,7 +99,7 @@ final class FeimiLegacyPanel {
 
     func setNarrowLayout() {
         DispatchQueue.main.async {
-            self.candidateWidth = 260
+            self.candidateWidth = CGFloat(FeimiPanelLayout.narrowCandidateWidth)
             self.saveMetrics()
             self.applyPanelMetrics()
         }
@@ -86,7 +107,7 @@ final class FeimiLegacyPanel {
 
     func increaseScale() {
         DispatchQueue.main.async {
-            self.scale = min(self.scale + 0.1, 1.8)
+            self.scale = min(self.scale + 0.1, CGFloat(FeimiPanelLayout.maximumScale))
             self.saveMetrics()
             self.applyPanelMetrics()
         }
@@ -94,7 +115,7 @@ final class FeimiLegacyPanel {
 
     func decreaseScale() {
         DispatchQueue.main.async {
-            self.scale = max(self.scale - 0.1, 0.8)
+            self.scale = max(self.scale - 0.1, CGFloat(FeimiPanelLayout.minimumScale))
             self.saveMetrics()
             self.applyPanelMetrics()
         }
@@ -114,6 +135,21 @@ final class FeimiLegacyPanel {
         panel.backgroundColor = NSColor(calibratedWhite: 0.82, alpha: 1)
         panel.isOpaque = true
         panel.hasShadow = true
+
+        let beginDrag = { [weak self] in self?.beginDraggingPanel() }
+        let drag = { [weak self] in self?.dragPanel() }
+        let endDrag = { [weak self] in self?.endDraggingPanel() }
+        [
+            inputModeLabel,
+            widthModeLabel,
+            compositionLabel,
+            candidateLabel,
+            commandModeLabel,
+        ].forEach {
+            $0.onMouseDown = beginDrag
+            $0.onMouseDragged = drag
+            $0.onMouseUp = endDrag
+        }
 
         let stack = NSStackView()
         stack.orientation = .horizontal
@@ -137,7 +173,10 @@ final class FeimiLegacyPanel {
             closeButton,
         ].forEach(stack.addArrangedSubview)
 
-        let contentView = NSView()
+        let contentView = FeimiPanelContentView()
+        contentView.onMouseDown = beginDrag
+        contentView.onMouseDragged = drag
+        contentView.onMouseUp = endDrag
         contentView.wantsLayer = true
         contentView.layer?.backgroundColor = NSColor(calibratedWhite: 0.82, alpha: 1).cgColor
         contentView.layer?.borderColor = NSColor.black.cgColor
@@ -172,10 +211,13 @@ final class FeimiLegacyPanel {
         closeButtonWidthConstraint?.isActive = true
         closeButtonHeightConstraint?.isActive = true
 
-        let width = (40 + 40 + 150 + candidateWidth + 120 + 40) * scale + 4
-        let height = 40 * scale + 2
+        let width = FeimiPanelLayout.contentWidth(
+            candidateWidth: Double(candidateWidth),
+            scale: Double(scale)
+        )
+        let height = FeimiPanelLayout.contentHeight(scale: Double(scale))
         let activePanel = targetPanel ?? panel
-        activePanel.setContentSize(NSSize(width: width, height: height))
+        activePanel.setContentSize(NSSize(width: CGFloat(width), height: CGFloat(height)))
         activePanel.contentView?.layoutSubtreeIfNeeded()
     }
 
@@ -185,20 +227,74 @@ final class FeimiLegacyPanel {
     }
 
     private func panelOrigin(anchor: NSPoint?) -> NSPoint {
+        if let manualOrigin {
+            return constrainedPanelOrigin(manualOrigin)
+        }
+
         guard let screen = NSScreen.screens.first else {
             return NSPoint(x: 120, y: 120)
         }
 
         let visibleFrame = screen.visibleFrame
         let panelSize = panel.frame.size
-        let preferred = anchor ?? NSPoint(
-            x: visibleFrame.maxX - panelSize.width - 24,
-            y: visibleFrame.minY + 24
-        )
-        let x = min(max(preferred.x, visibleFrame.minX + 8), visibleFrame.maxX - panelSize.width - 8)
-        let y = min(max(preferred.y - panelSize.height - 6, visibleFrame.minY + 8), visibleFrame.maxY - panelSize.height - 8)
+        let preferred: NSPoint
+        if let anchor {
+            preferred = NSPoint(x: anchor.x, y: anchor.y - panelSize.height - 6)
+        } else {
+            preferred = NSPoint(
+                x: visibleFrame.maxX - panelSize.width - 24,
+                y: visibleFrame.minY + 8
+            )
+        }
 
+        return constrainedPanelOrigin(preferred)
+    }
+
+    private func constrainedPanelOrigin(_ preferred: NSPoint) -> NSPoint {
+        guard let screen = NSScreen.screens.first else {
+            return preferred
+        }
+
+        let visibleFrame = screen.visibleFrame
+        let panelSize = panel.frame.size
+        let x = min(max(preferred.x, visibleFrame.minX + 8), visibleFrame.maxX - panelSize.width - 8)
+        let y = min(max(preferred.y, visibleFrame.minY + 8), visibleFrame.maxY - panelSize.height - 8)
         return NSPoint(x: x, y: y)
+    }
+
+    private func beginDraggingPanel() {
+        dragStartMouseLocation = NSEvent.mouseLocation
+        dragStartPanelOrigin = panel.frame.origin
+    }
+
+    private func dragPanel() {
+        guard let dragStartMouseLocation, let dragStartPanelOrigin else {
+            beginDraggingPanel()
+            return
+        }
+
+        let mouseLocation = NSEvent.mouseLocation
+        let preferredOrigin = NSPoint(
+            x: dragStartPanelOrigin.x + mouseLocation.x - dragStartMouseLocation.x,
+            y: dragStartPanelOrigin.y + mouseLocation.y - dragStartMouseLocation.y
+        )
+        let newOrigin = constrainedPanelOrigin(preferredOrigin)
+        panel.setFrameOrigin(newOrigin)
+        manualOrigin = newOrigin
+        saveManualOrigin(newOrigin)
+    }
+
+    private func endDraggingPanel() {
+        dragPanel()
+        dragStartMouseLocation = nil
+        dragStartPanelOrigin = nil
+    }
+
+    private func saveManualOrigin(_ origin: NSPoint) {
+        let defaults = UserDefaults.standard
+        defaults.set(true, forKey: DefaultsKey.hasManualOrigin)
+        defaults.set(Double(origin.x), forKey: DefaultsKey.manualOriginX)
+        defaults.set(Double(origin.y), forKey: DefaultsKey.manualOriginY)
     }
 
     @objc private func closeButtonClicked() {
@@ -206,9 +302,30 @@ final class FeimiLegacyPanel {
     }
 }
 
+private final class FeimiPanelContentView: NSView {
+    var onMouseDown: (() -> Void)?
+    var onMouseDragged: (() -> Void)?
+    var onMouseUp: (() -> Void)?
+
+    override func mouseDown(with event: NSEvent) {
+        onMouseDown?()
+    }
+
+    override func mouseDragged(with event: NSEvent) {
+        onMouseDragged?()
+    }
+
+    override func mouseUp(with event: NSEvent) {
+        onMouseUp?()
+    }
+}
+
 private final class FeimiPanelCell: NSTextField {
     private var widthConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
+    var onMouseDown: (() -> Void)?
+    var onMouseDragged: (() -> Void)?
+    var onMouseUp: (() -> Void)?
 
     init(width: CGFloat, alignment: NSTextAlignment) {
         super.init(frame: .zero)
@@ -236,6 +353,18 @@ private final class FeimiPanelCell: NSTextField {
         widthConstraint?.isActive = true
         heightConstraint?.isActive = true
         font = NSFont.boldSystemFont(ofSize: fontSize)
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        onMouseDown?()
+    }
+
+    override func mouseDragged(with event: NSEvent) {
+        onMouseDragged?()
+    }
+
+    override func mouseUp(with event: NSEvent) {
+        onMouseUp?()
     }
 
     @available(*, unavailable)
