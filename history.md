@@ -18,3 +18,4 @@
 - 實作：完成 `CommandProcessor`，支援 0.01 的 `,,,` 指令與大小寫不敏感辨識；Docker Swift `CommandProcessorTests` 2 tests passing。
 - 實作：完成 `FeimiEngine` 基本輸入狀態機，支援組字 buffer、候選刷新、空白送首選、Enter 送原碼或觸發 `,,,` 指令、Backspace 與 Escape；Docker Swift 全套 19 tests passing。
 - 文件：新增 macOS 安裝、重裝、卸載與重設草案，明確標示 macOS app/installer 尚未實作，並記錄 `liu-uni.tab` 不隨 repo/installer 提供與 `,,,z`/`,,,x` 權限風險。
+- 決策：`0.01` 的 `,,,z`/`,,,x` 預設只走 IMK/text input client 直接選取範圍讀寫；剪貼簿 copy/paste fallback 需明確 opt-in，且 log 不記錄選取原文或轉換後文字。

@@ -146,10 +146,27 @@ open "$HOME/Library/Application Support/UCL_LIU_SWIFT"
 
 `,,,z` / `,,,x` 這類功能會讀取或取代目前選取文字。理想情況下應透過文字輸入 client API 完成；若目標 app 不支援或 API 無法取得選取文字，未來可能 fallback 到 pasteboard / copy-paste 流程。
 
+`0.01` 版建議預設只啟用直接 API 路徑：
+
+- 透過目前的 input client 取得 selected range。
+- 只有在選取範圍有效且長度大於 0 時才執行轉換。
+- 讀取選取文字後，用 replacement range 直接替換原選取文字。
+- 若 app 不支援讀取或替換選取文字，顯示簡短失敗訊息，不自動改用剪貼簿。
+
 視實作方式與目標 app 限制，macOS 可能要求以下權限：
 
 - Accessibility
 - Input Monitoring
 - Clipboard / Pasteboard 存取提示
 
-若使用 pasteboard / copy-paste fallback，剪貼簿內容應盡量在操作後還原，但這只能做到 best effort。當其他 app 同時改寫剪貼簿、系統拒絕權限或目標 app 行為特殊時，仍可能無法完整還原。
+若使用 pasteboard / copy-paste fallback，應做成使用者明確 opt-in。首次啟用時需說明：此路徑會暫時讀寫剪貼簿、可能需要系統權限、會盡量還原但不能保證保留所有格式。
+
+剪貼簿 fallback 的最低安全要求：
+
+- 優先保存完整 pasteboard items 與 types，而不是只保存文字。
+- 操作前後檢查 pasteboard change count。
+- 若期間被其他 app 改寫剪貼簿，不要強行還原覆蓋使用者的新內容。
+- 設定 timeout 與焦點檢查；失敗時停止，不要亂貼。
+- log 只記功能名、目標 bundle id、native/pasteboard 路徑、成功/失敗原因與字數；不要記錄選取原文或轉換後文字。
+
+即使完成上述保護，剪貼簿還原仍只能做到 best effort。當其他 app 同時改寫剪貼簿、系統拒絕權限或目標 app 行為特殊時，仍可能無法完整還原。
