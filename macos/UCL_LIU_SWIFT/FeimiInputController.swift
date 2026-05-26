@@ -57,6 +57,11 @@ final class FeimiInputController: IMKInputController {
         }
 
         let result = engine.handle(input)
+
+        guard result.didConsumeInput else {
+            return false
+        }
+
         clearMarkedTextIfNeeded(result, client: sender)
 
         if let commitText = result.commitText {

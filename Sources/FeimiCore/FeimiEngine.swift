@@ -12,17 +12,20 @@ public struct FeimiEngineResult: Equatable, Sendable {
     public let candidates: [Candidate]
     public let commitText: String?
     public let command: FeimiCommand?
+    public let didConsumeInput: Bool
 
     public init(
         composition: String,
         candidates: [Candidate],
         commitText: String? = nil,
-        command: FeimiCommand? = nil
+        command: FeimiCommand? = nil,
+        didConsumeInput: Bool = true
     ) {
         self.composition = composition
         self.candidates = candidates
         self.commitText = commitText
         self.command = command
+        self.didConsumeInput = didConsumeInput
     }
 }
 
@@ -67,7 +70,7 @@ public struct FeimiEngine: Sendable {
 
         case .backspace:
             guard !buffer.isEmpty else {
-                return currentResult()
+                return currentResult(didConsumeInput: false)
             }
             buffer.removeLast()
             refreshCandidates()
@@ -119,8 +122,12 @@ public struct FeimiEngine: Sendable {
         return FeimiEngineResult(composition: "", candidates: [], commitText: rawText)
     }
 
-    private func currentResult() -> FeimiEngineResult {
-        FeimiEngineResult(composition: buffer, candidates: candidates)
+    private func currentResult(didConsumeInput: Bool = true) -> FeimiEngineResult {
+        FeimiEngineResult(
+            composition: buffer,
+            candidates: candidates,
+            didConsumeInput: didConsumeInput
+        )
     }
 
     private mutating func refreshCandidates() {

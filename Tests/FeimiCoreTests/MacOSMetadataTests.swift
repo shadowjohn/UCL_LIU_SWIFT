@@ -34,6 +34,13 @@ final class MacOSMetadataTests: XCTestCase {
         XCTAssertTrue(source.contains("cellSize(forBounds:"))
     }
 
+    func testInputControllerPassesThroughUnconsumedEngineInput() throws {
+        let source = try String(contentsOf: macOSSourceURL("FeimiInputController.swift"))
+
+        XCTAssertTrue(source.contains("guard result.didConsumeInput else"))
+        XCTAssertTrue(source.contains("return false"))
+    }
+
     private func loadInfoPlist(
         file: StaticString = #filePath,
         line: UInt = #line

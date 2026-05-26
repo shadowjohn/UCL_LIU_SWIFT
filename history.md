@@ -40,3 +40,4 @@
 - 決策：`0.01` 字根匯入先採手動選檔為主；第一次找不到字根時提示使用者選取合法來源的 `liu-uni.tab` / `.cin` / `.json` 或開啟使用者資料夾，替換既有字根/cache 前先備份，暫不掃描官蝦安裝路徑。
 - 修正：macOS build 失敗於復古文字框拖曳 callback；`[weak self]` 單行 closure 會被推成 `() -> Void?`，已將 begin/drag/end 三個 callback 明確標成 `() -> Void` 並補 source regression check。
 - 調整：復古肥米文字框改用接近 Windows 版的基準比例，將尺寸集中到 `FeimiPanelLayout`，並新增垂直置中的 `NSTextFieldCell`，讓「肥 / 半 / 正常模式」等文字上下置中。
+- 修正：肥模式在沒有字根 buffer 時按 Backspace 不再被輸入法吃掉；`FeimiEngineResult` 新增 `didConsumeInput`，空 buffer Backspace 會讓 macOS 外層 `return false`，交回目前 app 繼續刪已輸出的文字。

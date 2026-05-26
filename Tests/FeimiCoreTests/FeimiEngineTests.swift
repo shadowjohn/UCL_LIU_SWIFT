@@ -142,6 +142,19 @@ final class FeimiEngineTests: XCTestCase {
 
         XCTAssertEqual(result.composition, "c")
         XCTAssertEqual(result.candidates.map(\.text), ["一"])
+        XCTAssertTrue(result.didConsumeInput)
+    }
+
+    func testBackspaceWithoutCompositionIsNotConsumed() {
+        var engine = FeimiEngine(dictionary: FeimiDictionary(chardefs: [:]))
+
+        let result = engine.handle(.backspace)
+
+        XCTAssertEqual(result.composition, "")
+        XCTAssertEqual(result.candidates, [])
+        XCTAssertNil(result.commitText)
+        XCTAssertNil(result.command)
+        XCTAssertFalse(result.didConsumeInput)
     }
 
     func testCommandClearsCompositionAndReturnsCommand() {
