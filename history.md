@@ -12,3 +12,4 @@
 - 環境紀錄：Windows 工作站本機找不到 `swift` 與 `xcodebuild`，但 Docker Desktop 可用；Feimi Core Swift Package 測試先用 `swift:5.9` container 執行。
 - 實作：完成 Swift Package skeleton 與 `Candidate` value type；已用 Docker Swift 跑過 `FeimiDictionaryTests.testPackageImportsFeimiCore`。
 - 實作：完成 `FeimiDictionary` 基本 lookup 與 code lowercasing；Docker Swift `FeimiDictionaryTests` 4 tests passing。
+- 實作：完成 `v/r/s/f` 輔助選字與 reverse lookup；Docker Swift `FeimiDictionaryTests` 7 tests passing。

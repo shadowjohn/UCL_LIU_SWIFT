@@ -36,4 +36,35 @@ final class FeimiDictionaryTests: XCTestCase {
 
         XCTAssertEqual(dictionary.lookup("missing"), [])
     }
+
+    func testAuxiliarySelectionReturnsNthCandidateWhenDirectCodeMissing() throws {
+        let dictionary = FeimiDictionary(chardefs: [
+            "abc": ["一", "二", "三", "四", "五"]
+        ])
+
+        XCTAssertEqual(dictionary.lookup("abcv").map(\.text), ["二"])
+        XCTAssertEqual(dictionary.lookup("abcr").map(\.text), ["三"])
+        XCTAssertEqual(dictionary.lookup("abcs").map(\.text), ["四"])
+        XCTAssertEqual(dictionary.lookup("abcf").map(\.text), ["五"])
+    }
+
+    func testDirectCodeWinsOverAuxiliarySelection() throws {
+        let dictionary = FeimiDictionary(chardefs: [
+            "abcv": ["直"],
+            "abc": ["一", "二"]
+        ])
+
+        XCTAssertEqual(dictionary.lookup("abcv").map(\.text), ["直"])
+    }
+
+    func testReverseLookupUsesShortestKnownCodeAndCandidateIndex() throws {
+        let dictionary = FeimiDictionary(chardefs: [
+            "abcd": ["肥"],
+            "ucl": ["肥", "飛"]
+        ])
+
+        XCTAssertEqual(dictionary.reverseLookup(character: "肥"), "ucl")
+        XCTAssertEqual(dictionary.reverseLookup(character: "飛"), "ucl1")
+        XCTAssertEqual(dictionary.reverseLookup(text: "肥飛"), "ucl ucl1")
+    }
 }
