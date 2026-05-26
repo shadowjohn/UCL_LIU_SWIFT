@@ -31,6 +31,45 @@ final class FeimiEngineTests: XCTestCase {
         XCTAssertEqual(result.candidates, [])
     }
 
+    func testDigitCommitsZeroBasedCandidateAndClearsComposition() {
+        var engine = FeimiEngine(dictionary: FeimiDictionary(chardefs: [
+            "cl": ["中", "忠", "衷"]
+        ]))
+
+        _ = engine.handle(.text("cl"))
+        let result = engine.handle(.digit(1))
+
+        XCTAssertEqual(result.commitText, "忠")
+        XCTAssertEqual(result.composition, "")
+        XCTAssertEqual(result.candidates, [])
+    }
+
+    func testDigitZeroCommitsFirstCandidateLikeLegacyFeimi() {
+        var engine = FeimiEngine(dictionary: FeimiDictionary(chardefs: [
+            "cl": ["中", "忠"]
+        ]))
+
+        _ = engine.handle(.text("cl"))
+        let result = engine.handle(.digit(0))
+
+        XCTAssertEqual(result.commitText, "中")
+        XCTAssertEqual(result.composition, "")
+        XCTAssertEqual(result.candidates, [])
+    }
+
+    func testUnavailableDigitKeepsComposition() {
+        var engine = FeimiEngine(dictionary: FeimiDictionary(chardefs: [
+            "cl": ["中"]
+        ]))
+
+        _ = engine.handle(.text("cl"))
+        let result = engine.handle(.digit(9))
+
+        XCTAssertNil(result.commitText)
+        XCTAssertEqual(result.composition, "cl")
+        XCTAssertEqual(result.candidates.map(\.text), ["中"])
+    }
+
     func testEnterCommitsRawCompositionWhenNoCandidateIsAccepted() {
         var engine = FeimiEngine(dictionary: FeimiDictionary(chardefs: [:]))
 

@@ -23,29 +23,41 @@ xcode-select --install
 
 ## 開發者安裝與重裝
 
-未來 macOS App / InputMethodKit target 完成後，開發者可用 `xcodebuild` 建置，再將輸入法 app 放到使用者的 Input Methods 目錄：
+目前 repo 內已有最小 InputMethodKit app scaffold 與 shell scripts。macOS 上可先用 scripts 建置、安裝到使用者的 Input Methods 目錄：
 
 ```sh
 cd /path/to/UCL_LIU_SWIFT
 
+bash scripts/build-macos-input-method.sh
+bash scripts/install-macos-input-method.sh
+```
+
+目前 scaffold 先從使用者資料目錄讀取 `liu.cin`：
+
+```sh
+mkdir -p "$HOME/Library/Application Support/UCL_LIU_SWIFT"
+cp /path/to/liu.cin "$HOME/Library/Application Support/UCL_LIU_SWIFT/liu.cin"
+```
+
+重裝前 install script 會停止既有輸入法程序並移除舊版 app；也可手動執行：
+
+```sh
+killall UCL_LIU_SWIFT 2>/dev/null || true
+
+rm -rf "$HOME/Library/Input Methods/UCL_LIU_SWIFT.app"
+```
+
+重新複製 app 後，若系統仍載入舊版輸入法，請登出再登入，或重新啟動 macOS。
+
+未來若改成 Xcode project / scheme，可採用：
+
+```sh
 xcodebuild \
   -scheme UCL_LIU_SWIFT \
   -configuration Debug \
   CONFIGURATION_BUILD_DIR="$HOME/Library/Input Methods/" \
   build
 ```
-
-重裝前建議先停止既有輸入法程序並移除舊版 app：
-
-```sh
-killall UCL_LIU_SWIFT 2>/dev/null || true
-killall "UCL LIU SWIFT" 2>/dev/null || true
-
-rm -rf "$HOME/Library/Input Methods/UCL_LIU_SWIFT.app"
-rm -rf "$HOME/Library/Input Methods/UCL LIU SWIFT.app"
-```
-
-重新複製 app 後，若系統仍載入舊版輸入法，請登出再登入，或重新啟動 macOS。
 
 ## 使用者安裝
 
@@ -80,15 +92,19 @@ rm -rf "$HOME/Library/Input Methods/UCL LIU SWIFT.app"
 2. 停止正在執行的輸入法程序：
 
 ```sh
+bash scripts/uninstall-macos-input-method.sh
+```
+
+或手動執行：
+
+```sh
 killall UCL_LIU_SWIFT 2>/dev/null || true
-killall "UCL LIU SWIFT" 2>/dev/null || true
 ```
 
 3. 刪除輸入法 app：
 
 ```sh
 rm -rf "$HOME/Library/Input Methods/UCL_LIU_SWIFT.app"
-rm -rf "$HOME/Library/Input Methods/UCL LIU SWIFT.app"
 ```
 
 若卸載後輸入來源仍出現在系統設定中，請登出再登入，或重新啟動 macOS。

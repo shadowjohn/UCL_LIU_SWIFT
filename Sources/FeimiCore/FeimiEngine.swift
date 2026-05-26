@@ -1,5 +1,6 @@
 public enum FeimiInput: Equatable, Sendable {
     case text(String)
+    case digit(Int)
     case space
     case enter
     case escape
@@ -45,6 +46,9 @@ public struct FeimiEngine: Sendable {
             refreshCandidates()
             return currentResult()
 
+        case .digit(let index):
+            return acceptCandidate(at: index)
+
         case .space:
             return acceptWithSpace()
 
@@ -71,9 +75,8 @@ public struct FeimiEngine: Sendable {
             return FeimiEngineResult(composition: "", candidates: [], command: command)
         }
 
-        if let candidate = candidates.first {
-            clear()
-            return FeimiEngineResult(composition: "", candidates: [], commitText: candidate.text)
+        if !candidates.isEmpty {
+            return acceptCandidate(at: 0)
         }
 
         guard !buffer.isEmpty else {
@@ -83,6 +86,16 @@ public struct FeimiEngine: Sendable {
         let rawText = "\(buffer) "
         clear()
         return FeimiEngineResult(composition: "", candidates: [], commitText: rawText)
+    }
+
+    private mutating func acceptCandidate(at index: Int) -> FeimiEngineResult {
+        guard candidates.indices.contains(index) else {
+            return currentResult()
+        }
+
+        let candidate = candidates[index]
+        clear()
+        return FeimiEngineResult(composition: "", candidates: [], commitText: candidate.text)
     }
 
     private mutating func acceptWithEnter() -> FeimiEngineResult {
