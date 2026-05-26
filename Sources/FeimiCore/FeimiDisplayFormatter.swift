@@ -30,7 +30,8 @@ public struct FeimiDisplayFormatter: Sendable {
         for result: FeimiEngineResult,
         isFeimiMode: Bool = true,
         isHalfWidth: Bool = true,
-        isGameMode: Bool = false
+        isGameMode: Bool = false,
+        keepsPanelVisible: Bool = false
     ) -> FeimiPanelState {
         let candidateLabel = result.candidates
             .prefix(10)
@@ -44,7 +45,7 @@ public struct FeimiDisplayFormatter: Sendable {
             compositionLabel: result.composition,
             candidateLabel: candidateLabel,
             commandModeLabel: isGameMode ? "遊戲模式" : "正常模式",
-            shouldShowPanel: !result.composition.isEmpty || !candidateLabel.isEmpty
+            shouldShowPanel: keepsPanelVisible || !result.composition.isEmpty || !candidateLabel.isEmpty
         )
     }
 }

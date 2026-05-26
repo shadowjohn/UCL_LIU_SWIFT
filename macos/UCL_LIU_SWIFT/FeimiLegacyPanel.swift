@@ -13,12 +13,13 @@ final class FeimiLegacyPanel {
     private let compositionLabel = FeimiPanelCell(width: 150, alignment: .left)
     private let candidateLabel = FeimiPanelCell(width: 360, alignment: .left)
     private let commandModeLabel = FeimiPanelCell(width: 120, alignment: .center)
-    private let closeButton = NSButton(title: "╳", target: nil, action: nil)
+    private let closeButton = NSButton(title: "X", target: nil, action: nil)
     private lazy var panel: NSPanel = makePanel()
     private var closeButtonWidthConstraint: NSLayoutConstraint?
     private var closeButtonHeightConstraint: NSLayoutConstraint?
     private var scale: CGFloat
     private var candidateWidth: CGFloat
+    private var isHiddenByUser = false
 
     private init() {
         let savedScale = UserDefaults.standard.double(forKey: DefaultsKey.scale)
@@ -27,9 +28,17 @@ final class FeimiLegacyPanel {
         self.candidateWidth = savedCandidateWidth > 0 ? savedCandidateWidth : 360
     }
 
-    func update(with state: FeimiPanelState, anchor: NSPoint?) {
+    func update(
+        with state: FeimiPanelState,
+        anchor: NSPoint?,
+        revealsUserHiddenPanel: Bool = false
+    ) {
         DispatchQueue.main.async {
-            guard state.shouldShowPanel else {
+            if revealsUserHiddenPanel {
+                self.isHiddenByUser = false
+            }
+
+            guard state.shouldShowPanel, !self.isHiddenByUser else {
                 self.panel.orderOut(nil)
                 return
             }
@@ -48,6 +57,13 @@ final class FeimiLegacyPanel {
 
     func hide() {
         DispatchQueue.main.async {
+            self.panel.orderOut(nil)
+        }
+    }
+
+    func hideByUser() {
+        DispatchQueue.main.async {
+            self.isHiddenByUser = true
             self.panel.orderOut(nil)
         }
     }
@@ -95,7 +111,7 @@ final class FeimiLegacyPanel {
         panel.hidesOnDeactivate = false
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        panel.backgroundColor = NSColor.windowBackgroundColor
+        panel.backgroundColor = NSColor(calibratedWhite: 0.82, alpha: 1)
         panel.isOpaque = true
         panel.hasShadow = true
 
@@ -123,7 +139,8 @@ final class FeimiLegacyPanel {
 
         let contentView = NSView()
         contentView.wantsLayer = true
-        contentView.layer?.borderColor = NSColor.separatorColor.cgColor
+        contentView.layer?.backgroundColor = NSColor(calibratedWhite: 0.82, alpha: 1).cgColor
+        contentView.layer?.borderColor = NSColor.black.cgColor
         contentView.layer?.borderWidth = 1
         contentView.addSubview(stack)
         panel.contentView = contentView
@@ -185,7 +202,7 @@ final class FeimiLegacyPanel {
     }
 
     @objc private func closeButtonClicked() {
-        panel.orderOut(nil)
+        hideByUser()
     }
 }
 
@@ -200,12 +217,12 @@ private final class FeimiPanelCell: NSTextField {
         isSelectable = false
         isBezeled = false
         drawsBackground = true
-        backgroundColor = NSColor.textBackgroundColor
-        textColor = NSColor.labelColor
+        backgroundColor = NSColor(calibratedWhite: 0.86, alpha: 1)
+        textColor = NSColor.black
         font = NSFont.boldSystemFont(ofSize: 18)
         lineBreakMode = .byTruncatingTail
         wantsLayer = true
-        layer?.borderColor = NSColor.separatorColor.cgColor
+        layer?.borderColor = NSColor.black.cgColor
         layer?.borderWidth = 1
         self.alignment = alignment
         set(width: width, fontSize: 18, height: 40)

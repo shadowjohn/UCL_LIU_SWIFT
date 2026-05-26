@@ -31,6 +31,19 @@ final class FeimiDisplayFormatterTests: XCTestCase {
         XCTAssertEqual(state.candidateLabel, "")
     }
 
+    func testKeepsLegacyPanelVisibleInPersistentModeWhenEmpty() {
+        let result = FeimiEngineResult(composition: "", candidates: [])
+
+        let state = FeimiDisplayFormatter().panelState(for: result, keepsPanelVisible: true)
+
+        XCTAssertTrue(state.shouldShowPanel)
+        XCTAssertEqual(state.inputModeLabel, "肥")
+        XCTAssertEqual(state.widthModeLabel, "半")
+        XCTAssertEqual(state.compositionLabel, "")
+        XCTAssertEqual(state.candidateLabel, "")
+        XCTAssertEqual(state.commandModeLabel, "正常模式")
+    }
+
     func testFormatsGameModeLabel() {
         let result = FeimiEngineResult(composition: "abc", candidates: [])
 

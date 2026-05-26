@@ -65,11 +65,11 @@ final class FeimiStatusMenu: NSObject {
             commandModeLabel: "正常模式",
             shouldShowPanel: true
         )
-        FeimiLegacyPanel.shared.update(with: state, anchor: nil)
+        FeimiLegacyPanel.shared.update(with: state, anchor: nil, revealsUserHiddenPanel: true)
     }
 
     @objc private func hideLegacyPanel() {
-        FeimiLegacyPanel.shared.hide()
+        FeimiLegacyPanel.shared.hideByUser()
     }
 
     @objc private func openApplicationSupportDirectory() {
