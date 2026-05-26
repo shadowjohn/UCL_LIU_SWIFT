@@ -10,6 +10,7 @@ MACOS_DIR="$CONTENTS_DIR/MacOS"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
 ICON_FILE="$RESOURCES_DIR/UCL_LIU_SWIFT.png"
 ICON_BASE64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII="
+ENTITLEMENTS_FILE="$ROOT_DIR/macos/$APP_NAME/UCL_LIU_SWIFT.entitlements"
 
 rm -rf "$APP_DIR"
 mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
@@ -36,5 +37,11 @@ swiftc \
     -o "$MACOS_DIR/$APP_NAME"
 
 plutil -lint "$CONTENTS_DIR/Info.plist"
+
+if command -v codesign >/dev/null 2>&1; then
+    if ! codesign --force --deep --sign - --entitlements "$ENTITLEMENTS_FILE" "$APP_DIR"; then
+        echo "Warning: ad-hoc code signing failed; macOS may not list the input method." >&2
+    fi
+fi
 
 echo "$APP_DIR"

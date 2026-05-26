@@ -29,3 +29,4 @@
 - 修正：macOS install script 複製輸入法後會呼叫 app 的 `install` 模式執行 `TISRegisterInputSource` / enable input source，並提示使用者若系統設定仍看不到輸入法，按 `Shift+Command+Q` 登出後重進。
 - 修正：`TISCreateInputSourceList` 改用 `includeAllInstalled = true`，避免剛註冊但尚未啟用的 input source 被查詢流程排除；同時清掉 macOS build 的 unused result warnings。
 - 修正：macOS 輸入法 plist 改用合法且含 `inputmethod` 的 bundle id `tw.3wa.inputmethod.UCL-LIU-SWIFT`，輸入來源 id 固定為 `tw.3wa.UCL_LIU_SWIFT`；補上 `LSBackgroundOnly`、`ComponentInputModeDict` 與 icon key，並在註冊後查不到輸入來源時輸出附近 TIS 診斷。
+- 修正：對照 `y1lichen/ilimi-inputmethod` 後，macOS plist 改回 top-level TIS input source 設定並補齊一粒米使用的 visibility/menu icon/Touch Bar/caps-lock 等 key；註冊查找改為掃全部 TIS sources 並同時比對 input source id 與 input mode id；build/install script 會嘗試 ad-hoc codesign 與 lsregister。
