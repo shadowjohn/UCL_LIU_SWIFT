@@ -21,6 +21,7 @@ fi
 swiftc \
     -O \
     -framework AppKit \
+    -framework Carbon \
     -framework InputMethodKit \
     "$ROOT_DIR"/Sources/FeimiCore/*.swift \
     "$ROOT_DIR"/macos/$APP_NAME/*.swift \

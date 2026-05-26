@@ -72,6 +72,12 @@ bash scripts/install-macos-input-method.sh
 
 加入 `UCL_LIU_SWIFT`。如果第一次沒有看到輸入法，請登出再登入，或重新啟動 macOS。
 
+快速登出快捷鍵：
+
+```text
+Shift + Command + Q
+```
+
 ## 字根檔放哪裡
 
 使用者資料目錄：

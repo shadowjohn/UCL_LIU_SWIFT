@@ -20,6 +20,10 @@ if command -v xattr >/dev/null 2>&1; then
     xattr -dr com.apple.quarantine "$DEST_APP" 2>/dev/null || true
 fi
 
+"$DEST_APP/Contents/MacOS/$APP_NAME" install || {
+    echo "Warning: input source registration failed. Try logging out and back in, then add the input source manually."
+}
+
 echo "Installed: $DEST_APP"
 echo "Now open System Settings > Keyboard > Text Input > Edit > Add Input Source."
-echo "If UCL_LIU_SWIFT does not appear, log out and log back in."
+echo "If UCL_LIU_SWIFT does not appear, press Shift+Command+Q to log out, then log back in."

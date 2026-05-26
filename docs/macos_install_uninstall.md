@@ -57,6 +57,12 @@ rm -rf "$HOME/Library/Input Methods/UCL_LIU_SWIFT.app"
 
 重新複製 app 後，若系統仍載入舊版輸入法，請登出再登入，或重新啟動 macOS。
 
+快速登出快捷鍵：
+
+```text
+Shift + Command + Q
+```
+
 未來若改成 Xcode project / scheme，可採用：
 
 ```sh

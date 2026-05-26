@@ -22,6 +22,10 @@
     <string>tw.shadowjohn.UCLLIUSWIFT_Connection</string>
     <key>InputMethodServerControllerClass</key>
     <string>FeimiInputController</string>
+    <key>InputMethodServerDataSourceClass</key>
+    <string>FeimiInputController</string>
+    <key>InputMethodServerDelegateClass</key>
+    <string>FeimiInputController</string>
     <key>LSMinimumSystemVersion</key>
     <string>13.0</string>
     <key>LSUIElement</key>
