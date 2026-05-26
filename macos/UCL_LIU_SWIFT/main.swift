@@ -16,7 +16,7 @@ private func registerInputMethod() -> Int32 {
         kTISPropertyInputSourceID as String: bundleIdentifier
     ] as CFDictionary
 
-    guard let inputSources = TISCreateInputSourceList(properties, false)?.takeRetainedValue() as? [TISInputSource],
+    guard let inputSources = TISCreateInputSourceList(properties, true)?.takeRetainedValue() as? [TISInputSource],
           !inputSources.isEmpty else {
         NSLog("UCL_LIU_SWIFT: registered but cannot find input source: \(bundleIdentifier)")
         return 2
@@ -48,5 +48,6 @@ guard let server = IMKServer(
 }
 
 let feimiInputMethodServer = server
+_ = feimiInputMethodServer
 NSApplication.shared.setActivationPolicy(.accessory)
-NSApplicationMain(CommandLine.argc, CommandLine.unsafeArgv)
+_ = NSApplicationMain(CommandLine.argc, CommandLine.unsafeArgv)

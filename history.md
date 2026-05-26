@@ -27,3 +27,4 @@
 - 文件：參考 `UCL_LIU_CSharp` README 結構新增 macOS Swift 版 `README.md`，涵蓋專案定位、安裝/卸載、字根檔政策、使用方式、指令、權限隱私、開發與已知限制。
 - 文件：新增 `TODO.md`，粗估 `0.01` 可順暢打字目標目前約完成 40%、剩餘約 60%，並列出 macOS 實機、候選窗、指令副作用、設定/log、`,,,z`/`,,,x`、installer 與驗收待辦。
 - 修正：macOS install script 複製輸入法後會呼叫 app 的 `install` 模式執行 `TISRegisterInputSource` / enable input source，並提示使用者若系統設定仍看不到輸入法，按 `Shift+Command+Q` 登出後重進。
+- 修正：`TISCreateInputSourceList` 改用 `includeAllInstalled = true`，避免剛註冊但尚未啟用的 input source 被查詢流程排除；同時清掉 macOS build 的 unused result warnings。
