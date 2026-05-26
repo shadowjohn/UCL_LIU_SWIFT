@@ -39,3 +39,4 @@
 - 修正：macOS build 失敗於 `isControlSpace(_:) -> Bool` 缺少明確 `return`；補上 return 並新增 regression check，避免 Ctrl+Space 判斷式再次因 Linux tests 不編 AppKit 而漏掉。
 - 決策：`0.01` 字根匯入先採手動選檔為主；第一次找不到字根時提示使用者選取合法來源的 `liu-uni.tab` / `.cin` / `.json` 或開啟使用者資料夾，替換既有字根/cache 前先備份，暫不掃描官蝦安裝路徑。
 - 修正：macOS build 失敗於復古文字框拖曳 callback；`[weak self]` 單行 closure 會被推成 `() -> Void?`，已將 begin/drag/end 三個 callback 明確標成 `() -> Void` 並補 source regression check。
+- 調整：復古肥米文字框改用接近 Windows 版的基準比例，將尺寸集中到 `FeimiPanelLayout`，並新增垂直置中的 `NSTextFieldCell`，讓「肥 / 半 / 正常模式」等文字上下置中。

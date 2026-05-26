@@ -11,11 +11,11 @@ final class FeimiLegacyPanel {
         static let manualOriginY = "FeimiLegacyPanel.manualOriginY"
     }
 
-    private let inputModeLabel = FeimiPanelCell(width: 40, alignment: .center)
-    private let widthModeLabel = FeimiPanelCell(width: 40, alignment: .center)
-    private let compositionLabel = FeimiPanelCell(width: 150, alignment: .left)
-    private let candidateLabel = FeimiPanelCell(width: 360, alignment: .left)
-    private let commandModeLabel = FeimiPanelCell(width: 120, alignment: .center)
+    private let inputModeLabel = FeimiPanelCell(width: CGFloat(FeimiPanelLayout.inputModeWidth), alignment: .center)
+    private let widthModeLabel = FeimiPanelCell(width: CGFloat(FeimiPanelLayout.widthModeWidth), alignment: .center)
+    private let compositionLabel = FeimiPanelCell(width: CGFloat(FeimiPanelLayout.compositionWidth), alignment: .left)
+    private let candidateLabel = FeimiPanelCell(width: CGFloat(FeimiPanelLayout.defaultCandidateWidth), alignment: .left)
+    private let commandModeLabel = FeimiPanelCell(width: CGFloat(FeimiPanelLayout.commandModeWidth), alignment: .center)
     private let closeButton = NSButton(title: "X", target: nil, action: nil)
     private lazy var panel: NSPanel = makePanel()
     private var closeButtonWidthConstraint: NSLayoutConstraint?
@@ -123,7 +123,15 @@ final class FeimiLegacyPanel {
 
     private func makePanel() -> NSPanel {
         let panel = NSPanel(
-            contentRect: NSRect(x: 120, y: 120, width: 754, height: 42),
+            contentRect: NSRect(
+                x: 120,
+                y: 120,
+                width: CGFloat(FeimiPanelLayout.contentWidth(
+                    candidateWidth: FeimiPanelLayout.defaultCandidateWidth,
+                    scale: 1
+                )),
+                height: CGFloat(FeimiPanelLayout.contentHeight(scale: 1))
+            ),
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -202,18 +210,35 @@ final class FeimiLegacyPanel {
     }
 
     private func applyPanelMetrics(to targetPanel: NSPanel? = nil) {
-        inputModeLabel.set(width: 40 * scale, fontSize: 16 * scale, height: 40 * scale)
-        widthModeLabel.set(width: 40 * scale, fontSize: 16 * scale, height: 40 * scale)
-        compositionLabel.set(width: 150 * scale, fontSize: 18 * scale, height: 40 * scale)
-        candidateLabel.set(width: candidateWidth * scale, fontSize: 18 * scale, height: 40 * scale)
-        commandModeLabel.set(width: 120 * scale, fontSize: 14 * scale, height: 40 * scale)
+        let cellHeight = CGFloat(FeimiPanelLayout.cellHeight) * scale
+        inputModeLabel.set(
+            width: CGFloat(FeimiPanelLayout.inputModeWidth) * scale,
+            fontSize: 16 * scale,
+            height: cellHeight
+        )
+        widthModeLabel.set(
+            width: CGFloat(FeimiPanelLayout.widthModeWidth) * scale,
+            fontSize: 16 * scale,
+            height: cellHeight
+        )
+        compositionLabel.set(
+            width: CGFloat(FeimiPanelLayout.compositionWidth) * scale,
+            fontSize: 18 * scale,
+            height: cellHeight
+        )
+        candidateLabel.set(width: candidateWidth * scale, fontSize: 18 * scale, height: cellHeight)
+        commandModeLabel.set(
+            width: CGFloat(FeimiPanelLayout.commandModeWidth) * scale,
+            fontSize: 14 * scale,
+            height: cellHeight
+        )
         closeButton.font = NSFont.boldSystemFont(ofSize: 16 * scale)
 
-        let buttonSide = 40 * scale
+        let buttonWidth = CGFloat(FeimiPanelLayout.closeButtonWidth) * scale
         closeButtonWidthConstraint?.isActive = false
         closeButtonHeightConstraint?.isActive = false
-        closeButtonWidthConstraint = closeButton.widthAnchor.constraint(equalToConstant: buttonSide)
-        closeButtonHeightConstraint = closeButton.heightAnchor.constraint(equalToConstant: buttonSide)
+        closeButtonWidthConstraint = closeButton.widthAnchor.constraint(equalToConstant: buttonWidth)
+        closeButtonHeightConstraint = closeButton.heightAnchor.constraint(equalToConstant: cellHeight)
         closeButtonWidthConstraint?.isActive = true
         closeButtonHeightConstraint?.isActive = true
 
@@ -335,6 +360,7 @@ private final class FeimiPanelCell: NSTextField {
 
     init(width: CGFloat, alignment: NSTextAlignment) {
         super.init(frame: .zero)
+        cell = FeimiCenteredTextFieldCell(textCell: "")
         translatesAutoresizingMaskIntoConstraints = false
         isEditable = false
         isSelectable = false
@@ -376,5 +402,15 @@ private final class FeimiPanelCell: NSTextField {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         return nil
+    }
+}
+
+private final class FeimiCenteredTextFieldCell: NSTextFieldCell {
+    override func drawingRect(forBounds rect: NSRect) -> NSRect {
+        var centeredRect = super.drawingRect(forBounds: rect)
+        let textHeight = cellSize(forBounds: rect).height
+        centeredRect.origin.y = rect.origin.y + max((rect.height - textHeight) / 2, 0)
+        centeredRect.size.height = min(textHeight, rect.height)
+        return centeredRect
     }
 }

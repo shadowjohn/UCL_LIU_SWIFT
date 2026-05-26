@@ -26,6 +26,14 @@ final class MacOSMetadataTests: XCTestCase {
         XCTAssertTrue(source.contains("let endDrag: () -> Void"))
     }
 
+    func testLegacyPanelUsesVerticallyCenteredTextCell() throws {
+        let source = try String(contentsOf: macOSSourceURL("FeimiLegacyPanel.swift"))
+
+        XCTAssertTrue(source.contains("FeimiCenteredTextFieldCell"))
+        XCTAssertTrue(source.contains("override func drawingRect(forBounds"))
+        XCTAssertTrue(source.contains("cellSize(forBounds:"))
+    }
+
     private func loadInfoPlist(
         file: StaticString = #filePath,
         line: UInt = #line
