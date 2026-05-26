@@ -9,4 +9,5 @@
 - 決策：`0.01` 版需納入 `,,,z` 框選文章轉字根與 `,,,x` 框選字根轉文章；規格需明確處理 macOS 剪貼簿與權限風險。
 - 設計調整：`,,,z` / `,,,x` 優先嘗試 macOS text input client 的選取範圍、substring 與 replacement API；剪貼簿與模擬 copy/paste 只作為 fallback。
 - 實作啟動：曾建立 `codex/feimi-core-foundation` 分支；使用者確認本次可直接疊在 `main`，後續小步 commit 直接在 `main` 進行。
-- 環境紀錄：目前 Windows 工作站找不到 `swift` 與 `xcodebuild`，Swift 測試需在 macOS/Xcode 或已安裝 Swift toolchain 的環境執行。
+- 環境紀錄：Windows 工作站本機找不到 `swift` 與 `xcodebuild`，但 Docker Desktop 可用；Feimi Core Swift Package 測試先用 `swift:5.9` container 執行。
+- 實作：完成 Swift Package skeleton 與 `Candidate` value type；已用 Docker Swift 跑過 `FeimiDictionaryTests.testPackageImportsFeimiCore`。
