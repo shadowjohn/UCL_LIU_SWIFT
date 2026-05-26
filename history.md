@@ -37,3 +37,4 @@
 - 實作：參考 UCL_LIU_CSharp / UCL_LIU tray，肥米文字框支援拖曳並保存位置；menu bar 改成舊版 tray 風格，含關於、正常/遊戲切換、出字模式、畫面調整、Ctrl+Space 英/肥切換、重新載入、使用者資料夾與離開；`Ctrl+Space` 由肥米內部攔截為英/肥切換，不交給 macOS 切輸入來源。
 - 決策：`wavs/` 音效檔可比照其他肥米版本簽入 repo；已從 `.gitignore` 移除並準備作為後續打字音效資源。
 - 修正：macOS build 失敗於 `isControlSpace(_:) -> Bool` 缺少明確 `return`；補上 return 並新增 regression check，避免 Ctrl+Space 判斷式再次因 Linux tests 不編 AppKit 而漏掉。
+- 決策：`0.01` 字根匯入先採手動選檔為主；第一次找不到字根時提示使用者選取合法來源的 `liu-uni.tab` / `.cin` / `.json` 或開啟使用者資料夾，替換既有字根/cache 前先備份，暫不掃描官蝦安裝路徑。
