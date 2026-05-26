@@ -6,12 +6,14 @@
     <string>en</string>
     <key>CFBundleExecutable</key>
     <string>UCL_LIU_SWIFT</string>
+    <key>CFBundleDisplayName</key>
+    <string>肥米</string>
     <key>CFBundleIdentifier</key>
     <string>tw.3wa.inputmethod.UCL-LIU-SWIFT</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>UCL_LIU_SWIFT</string>
+    <string>肥米</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

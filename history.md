@@ -32,3 +32,4 @@
 - 修正：對照 `y1lichen/ilimi-inputmethod` 後，macOS plist 改回 top-level TIS input source 設定並補齊一粒米使用的 visibility/menu icon/Touch Bar/caps-lock 等 key；註冊查找改為掃全部 TIS sources 並同時比對 input source id 與 input mode id；build/install script 會嘗試 ad-hoc codesign 與 lsregister。
 - 實作：新增復古肥米浮動候選窗與 macOS menu bar「肥」status item；候選窗顯示 `肥`、`半`、目前輸入碼、`0候選 1候選 ...` 與 `正常模式`，送字、Esc、切換輸入法時會收起；新增 `FeimiDisplayFormatter` 與測試固定顯示格式。
 - 實作：接上復古浮動窗控制指令，`,,,lock` / `,,,unlock` 會切換正常/遊戲模式，`,,,s` / `,,,l` 會調整候選窗寬度，`,,,+` / `,,,-` 會調整縮放並保存；menu bar 新增顯示/隱藏文字框與重新載入字典/pinyi；確認指令執行後會清空組字狀態。
+- 修正：macOS 輸入法顯示名稱改為「肥米」，保留 executable、bundle id 與 input source id 的技術識別值，避免影響既有註冊流程；menu bar、關於視窗與安裝提示同步改用「肥米」。

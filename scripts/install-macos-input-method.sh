@@ -38,4 +38,4 @@ fi
 
 echo "Installed: $DEST_APP"
 echo "Now open System Settings > Keyboard > Text Input > Edit > Add Input Source."
-echo "If UCL_LIU_SWIFT does not appear, press Shift+Command+Q to log out, then log back in."
+echo "If 肥米 does not appear, press Shift+Command+Q to log out, then log back in."

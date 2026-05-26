@@ -70,7 +70,7 @@ bash scripts/install-macos-input-method.sh
 系統設定 > 鍵盤 > 文字輸入 > 編輯 > 新增輸入來源
 ```
 
-加入 `UCL_LIU_SWIFT`。如果第一次沒有看到輸入法，請登出再登入，或重新啟動 macOS。
+加入「肥米」。如果第一次沒有看到輸入法，請登出再登入，或重新啟動 macOS。
 
 快速登出快捷鍵：
 

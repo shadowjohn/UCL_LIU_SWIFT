@@ -18,7 +18,7 @@ final class FeimiStatusMenu: NSObject {
         }
 
         let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: "UCL_LIU_SWIFT 0.01", action: nil, keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "肥米 0.01", action: nil, keyEquivalent: ""))
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(
             title: "顯示文字框",
@@ -92,7 +92,7 @@ final class FeimiStatusMenu: NSObject {
     @objc private func showAbout() {
         let alert = NSAlert()
         alert.messageText = "肥米輸入法"
-        alert.informativeText = "UCL_LIU_SWIFT 0.01"
+        alert.informativeText = "肥米 0.01"
         alert.addButton(withTitle: "OK")
         alert.runModal()
     }

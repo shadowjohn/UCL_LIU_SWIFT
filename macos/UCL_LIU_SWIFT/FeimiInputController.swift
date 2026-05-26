@@ -144,7 +144,7 @@ final class FeimiInputController: IMKInputController {
     private func handle(_ command: FeimiCommand, client sender: Any!) {
         switch command {
         case .version:
-            commit("UCL_LIU_SWIFT 0.01", client: sender)
+            commit("肥米 0.01", client: sender)
             FeimiLegacyPanel.shared.hide()
         case .lock:
             isGameMode = true
