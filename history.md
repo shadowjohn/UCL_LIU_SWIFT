@@ -16,3 +16,4 @@
 - 實作：完成 `CinParser`，支援 `%chardef begin/end` 解析、空白行忽略與缺少 chardef 區塊錯誤；Docker Swift `CinParserTests` 3 tests passing。
 - 實作：完成 `PinyiEngine`，支援 `VERSION_0.01` header、注音 key/symbol 雙向轉換、候選查詢與同音去重；Docker Swift `PinyiEngineTests` 2 tests passing。
 - 實作：完成 `CommandProcessor`，支援 0.01 的 `,,,` 指令與大小寫不敏感辨識；Docker Swift `CommandProcessorTests` 2 tests passing。
+- 實作：完成 `FeimiEngine` 基本輸入狀態機，支援組字 buffer、候選刷新、空白送首選、Enter 送原碼或觸發 `,,,` 指令、Backspace 與 Escape；Docker Swift 全套 19 tests passing。
