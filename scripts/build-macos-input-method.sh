@@ -8,11 +8,19 @@ APP_DIR="$BUILD_DIR/$APP_NAME.app"
 CONTENTS_DIR="$APP_DIR/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
+ICON_FILE="$RESOURCES_DIR/UCL_LIU_SWIFT.png"
+ICON_BASE64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII="
 
 rm -rf "$APP_DIR"
 mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 
 cp "$ROOT_DIR/macos/$APP_NAME/Info.plist" "$CONTENTS_DIR/Info.plist"
+
+if printf '' | base64 --decode >/dev/null 2>&1; then
+    printf '%s' "$ICON_BASE64" | base64 --decode > "$ICON_FILE"
+else
+    printf '%s' "$ICON_BASE64" | base64 -D > "$ICON_FILE"
+fi
 
 if [[ -f "$ROOT_DIR/pinyi.txt" ]]; then
     cp "$ROOT_DIR/pinyi.txt" "$RESOURCES_DIR/pinyi.txt"

@@ -7,7 +7,7 @@
     <key>CFBundleExecutable</key>
     <string>UCL_LIU_SWIFT</string>
     <key>CFBundleIdentifier</key>
-    <string>tw.shadowjohn.UCLLIUSWIFT</string>
+    <string>tw.3wa.inputmethod.UCL-LIU-SWIFT</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
@@ -18,8 +18,33 @@
     <string>0.01</string>
     <key>CFBundleVersion</key>
     <string>1</string>
+    <key>ComponentInputModeDict</key>
+    <dict>
+        <key>tsInputModeListKey</key>
+        <dict>
+            <key>tw.3wa.UCL_LIU_SWIFT</key>
+            <dict>
+                <key>TISInputSourceID</key>
+                <string>tw.3wa.UCL_LIU_SWIFT</string>
+                <key>TISIntendedLanguage</key>
+                <string>zh-Hant</string>
+                <key>tsInputModeDefaultStateKey</key>
+                <true/>
+                <key>tsInputModeIsVisibleKey</key>
+                <true/>
+                <key>tsInputModePrimaryInScriptKey</key>
+                <true/>
+                <key>tsInputModeScriptKey</key>
+                <string>smUnicode</string>
+            </dict>
+        </dict>
+        <key>tsVisibleInputModeOrderedArrayKey</key>
+        <array>
+            <string>tw.3wa.UCL_LIU_SWIFT</string>
+        </array>
+    </dict>
     <key>InputMethodConnectionName</key>
-    <string>tw.shadowjohn.UCLLIUSWIFT_Connection</string>
+    <string>tw.3wa.UCL_LIU_SWIFT_Connection</string>
     <key>InputMethodServerControllerClass</key>
     <string>FeimiInputController</string>
     <key>InputMethodServerDataSourceClass</key>
@@ -28,12 +53,12 @@
     <string>FeimiInputController</string>
     <key>LSMinimumSystemVersion</key>
     <string>13.0</string>
-    <key>LSUIElement</key>
-    <true/>
+    <key>LSBackgroundOnly</key>
+    <string>1</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
     <key>TISInputSourceID</key>
-    <string>tw.shadowjohn.UCLLIUSWIFT</string>
+    <string>tw.3wa.UCL_LIU_SWIFT</string>
     <key>TISIntendedLanguage</key>
     <string>zh-Hant</string>
     <key>tsInputMethodCharacterRepertoireKey</key>
@@ -43,11 +68,9 @@
         <string>Hani</string>
         <string>Han</string>
     </array>
+    <key>tsInputMethodIconFileKey</key>
+    <string>UCL_LIU_SWIFT.png</string>
     <key>tsInputModeScriptKey</key>
     <string>smUnicode</string>
-    <key>tsVisibleInputModeOrderedArrayKey</key>
-    <array>
-        <string>tw.shadowjohn.UCLLIUSWIFT</string>
-    </array>
 </dict>
 </plist>
