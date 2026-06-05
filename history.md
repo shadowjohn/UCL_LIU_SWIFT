@@ -2,6 +2,7 @@
 
 ## 2026-06-05
 
+- 文件：重估 `TODO.md`，將 `0.01` 日常打字 MVP 進度調整為約 60% / 40%，另標示完整對齊 Python/C# 版約 35%；拆分候選截斷與分頁、UserDefaults 與 config/log，並新增下一輪 sprint 順序。
 - 文件：新增 `changelog.md`，將 `0.01-dev` 目前已完成的 core、macOS 外殼、復古肥框、tray、字根匯入、修正與尚未完成項目整理成使用者可讀更新紀錄。
 - 實作：新增 `FeimiDictionaryImportPlan`，支援 `liu-uni.tab` / `.cin` / `.json` 匯入規則、目的檔名正規化與替換前備份清單；Docker Swift `FeimiDictionaryImportPlanTests` 4 tests passing。
 - 實作：新增 macOS `FeimiDictionaryImportController`，提供 `NSOpenPanel` 選取字根檔、匯入前暫存資料夾試載入、替換既有字根/cache 前備份到 `Dictionary Backups/<timestamp>/`、匯入成功後發送 `.feimiReloadData`。

@@ -7,21 +7,29 @@
 以 `0.01` 版「可以在 macOS 順暢日常打字」作為目標，目前大約：
 
 ```text
-已完成：約 40%
-未完成：約 60%
+已完成：約 60%
+未完成：約 40%
 ```
 
-這個估算偏保守，原因是 Feimi Core 已有一批可測功能，但 macOS InputMethodKit 實機行為、候選窗、權限、installer 與跨 App 驗收都還沒有在 mac 上跑完。
+這個估算只看 `0.01` 日常打字 MVP。Feimi Core、復古肥框、menu bar、Ctrl+Space、Backspace pass-through 與字根匯入已經有測試或實作；真正的剩餘風險集中在 macOS 實機 build/install、跨 App 輸入矩陣、切換狀態清理與正式 log。
+
+若以 Python / C# 版完整肥米功能對齊來看，目前大約是：
+
+```text
+已完成：約 35%
+未完成：約 65%
+```
 
 分項估算：
 
 | 區塊 | 目前狀態 | 粗估完成度 |
 | --- | --- | --- |
 | Feimi Core 查碼/選字/字典 | 已有測試覆蓋，基本可用 | 75% |
-| `pinyi.txt` / 同音 | 已接入 engine，注音模式尚缺 | 50% |
-| macOS InputMethodKit 外殼 | scaffold 已有，尚未 mac 實機修正 | 25% |
-| 復古候選窗 | 已有長駐 AppKit 浮動窗，仍待 macOS 實機微調 | 70% |
-| 指令副作用與設定保存 | command parser 已有，實際行為尚缺 | 20% |
+| 字根匯入與 cache | 支援首次提示、tray 匯入、匯入前驗證與備份；待 mac 實機確認 | 75% |
+| `pinyi.txt` / 同音 | 已接入 engine，注音模式與同音分頁尚缺 | 55% |
+| macOS InputMethodKit 外殼 | scaffold、metadata、install/register、menu 已有；待 mac 實機驗收 | 60% |
+| 復古候選窗 | 已有長駐、拖曳、縮放、舊比例；分頁/短根尚缺 | 80% |
+| 指令副作用與設定保存 | version/lock/s/l/+/- 已接上；c/t、config/log 尚缺 | 45% |
 | `,,,z` / `,,,x` | core 反查已有，mac 選取文字流程尚缺 | 20% |
 | installer / release | 只有 dev scripts，正式包裝尚缺 | 15% |
 | macOS App 相容性驗收 | 尚未跑 TextEdit/Safari/VS Code 等矩陣 | 0% |
@@ -44,16 +52,19 @@
 - [x] dev build / install / uninstall scripts。
 - [x] README 與 macOS install/uninstall 文件。
 - [x] 第一次缺字根提示與 menu bar 字根檔匯入。
+- [x] `changelog.md` 使用者可讀更新紀錄。
 
 ## 0.01 必做：可順暢打字
 
 ### P0：先在 macOS 跑起來
 
 - [ ] 在 macOS + Xcode 上執行 `scripts/build-macos-input-method.sh`。
-- [ ] 修正 macOS framework 編譯錯誤，確認 `.app` 可產生。
+- [ ] 確認目前 `main` 在 macOS framework 編譯無錯，`.app` 可產生。
 - [ ] 執行 `scripts/install-macos-input-method.sh`，確認輸入法出現在系統輸入來源。
 - [x] 提供 `liu.json` / `liu.cin` / `liu-uni.tab` 匯入入口，匯入後觸發 reload。
 - [x] 若字典缺失，第一次啟用時提示匯入或開啟使用者資料夾，不讓輸入法 crash。
+- [ ] 在 macOS 實機確認第一次缺字根提示只出現一次，且「稍後」不干擾繼續測試。
+- [ ] 在 macOS 實機確認 tray `7.字根檔 > 匯入字根檔...` 可選 `liu-uni.tab` / `.cin` / `.json`。
 - [ ] 在 macOS 實機確認匯入 `liu-uni.tab` 後產生 `liu.cin` / `liu.json` cache。
 - [ ] 若字典載入失敗，寫入正式 log 檔。
 
@@ -77,7 +88,8 @@
 - [x] 顯示目前輸入碼。
 - [x] 顯示 `0肥 1飛 2非 ...` 候選。
 - [x] 跟隨目前輸入位置。
-- [x] 支援候選過長時截斷或分頁。
+- [x] 候選過長時先截斷顯示前 10 個。
+- [ ] 候選過長時提供分頁或更多提示。
 - [x] 切換輸入法時收起；送字、Esc 後回到長駐空狀態。
 
 ### P0：基本指令副作用
@@ -91,7 +103,8 @@
 ### P0：設定與 log
 
 - [ ] 建立 `config.json`。
-- [ ] 保存 UI 寬度、縮放、lock/unlock、繁簡模式。
+- [x] 以 `UserDefaults` 保存 UI 寬度、縮放、lock/unlock、英/肥模式。
+- [ ] 保存繁簡模式。
 - [ ] 建立 `log/uclliu_yyyyMMdd.log`。
 - [ ] 記錄啟動、字典載入、字典轉換、pinyi 載入、IME event error、command error。
 - [ ] log 不記錄使用者輸入內容全文。
@@ -115,9 +128,34 @@
 - [ ] 候選數超過 10 個時分頁或更多提示。
 - [x] 開啟使用者資料夾的選單列項目。
 - [x] 重新載入字根的選單列項目。
-- [x] 重新載入 `pinyi.txt` 的選單列項目。
+- [x] 重新載入字典 action 會同步重載 `pinyi.txt`。
+- [ ] menu 文案改成更清楚的「重新載入字典 / pinyi」。
 - [x] menu bar 參考舊版 tray：關於、正常/遊戲切換、出字模式、畫面調整、Ctrl+Space、離開。
 - [x] menu bar 字根檔子選單：匯入字根、重新載入、開啟使用者資料夾。
+
+## 下一輪建議順序
+
+### Sprint A：macOS 實機可順暢打字
+
+- [ ] 在 macOS 重新 build/install 最新 `main`。
+- [ ] 完成字根匯入實機測試，包含首次提示、tray 匯入、cache 產生、壞檔錯誤提示。
+- [ ] 跑 TextEdit 基本輸入矩陣：字根、Space、數字、Enter、Esc、Backspace、Ctrl+Space。
+- [ ] 修正切換 App / 切換輸入來源後 stale composing buffer。
+- [ ] 建立正式 log 檔，先覆蓋啟動、字典、pinyi、reload、command error。
+
+### Sprint B：補肥米感
+
+- [ ] 接上 `,,,c` / `,,,t` 簡繁切換。
+- [ ] 接上 `';` 注音模式。
+- [ ] 接上同音分頁與候選更多提示。
+- [ ] 接上短根顯示。
+- [ ] 接上 `wavs/` 打字音效開關。
+
+### Sprint C：高風險功能
+
+- [ ] 做 `,,,z` / `,,,x` native text input client 路徑。
+- [ ] 只在使用者明確開啟時提供 pasteboard fallback。
+- [ ] 補剪貼簿 fallback 的權限、還原與 log 保護。
 
 ## 0.01 風險功能：`,,,z` / `,,,x`
 
