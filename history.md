@@ -2,6 +2,7 @@
 
 ## 2026-06-05
 
+- 文件：新增 `changelog.md`，將 `0.01-dev` 目前已完成的 core、macOS 外殼、復古肥框、tray、字根匯入、修正與尚未完成項目整理成使用者可讀更新紀錄。
 - 實作：新增 `FeimiDictionaryImportPlan`，支援 `liu-uni.tab` / `.cin` / `.json` 匯入規則、目的檔名正規化與替換前備份清單；Docker Swift `FeimiDictionaryImportPlanTests` 4 tests passing。
 - 實作：新增 macOS `FeimiDictionaryImportController`，提供 `NSOpenPanel` 選取字根檔、匯入前暫存資料夾試載入、替換既有字根/cache 前備份到 `Dictionary Backups/<timestamp>/`、匯入成功後發送 `.feimiReloadData`。
 - 實作：menu bar「肥」選單新增 `7.字根檔` 子選單，包含匯入字根檔、重新載入字典、開啟使用者資料夾。
