@@ -29,6 +29,7 @@ final class FeimiInputController: IMKInputController {
 
     override func activateServer(_ sender: Any!) {
         showStatusPanel(client: sender)
+        FeimiDictionaryImportController.shared.promptForMissingDictionaryIfNeeded()
     }
 
     override func deactivateServer(_ sender: Any!) {

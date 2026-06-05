@@ -8,7 +8,7 @@ macOS 原生版「肥米輸入法」。
 
 - Feimi Core 已可查碼、選候選、反查、解析 `pinyi.txt`、解析 `liu.cin` / `liu.json` / `liu-uni.tab`。
 - macOS InputMethodKit app scaffold 已建立，可在 macOS 上嘗試 build / install。
-- 復古候選窗、完整 installer、更多 App 相容性測試仍在開發中。
+- 復古候選窗、menu bar「肥」選單、字根檔匯入與第一次缺字根提示已接上；完整 installer、更多 App 相容性測試仍在開發中。
 
 ## 作者與來源
 
@@ -80,6 +80,14 @@ Shift + Command + Q
 
 ## 字根檔放哪裡
 
+第一次啟用肥米時，若找不到字根檔，會提示選取合法來源的 `liu-uni.tab`、`liu.cin` 或 `liu.json`。
+
+也可以從 menu bar 的「肥」選單匯入：
+
+```text
+7.字根檔 > 匯入字根檔...
+```
+
 使用者資料目錄：
 
 ```sh
@@ -107,7 +115,13 @@ pinyi.txt
 1. 若有 `liu.json`，直接載入。
 2. 若沒有 `liu.json` 但有 `liu.cin`，載入後產生 `liu.json` cache。
 3. 若只有 `liu-uni.tab`，轉出 `liu.cin` 與 `liu.json` cache。
-4. 若三者都沒有，輸入法會記錄錯誤，候選字表為空。
+4. 若三者都沒有，輸入法會提示匯入字根檔，候選字表暫時為空。
+
+匯入新字根前會先用暫存資料夾試載入。通過後才會替換目前字根，並把被替換的來源/cache 備份到：
+
+```text
+Dictionary Backups/<timestamp>/
+```
 
 ## 使用方式
 
@@ -261,10 +275,9 @@ Tests/FeimiCoreTests/
 
 ## 已知限制
 
-- 尚未完成復古 AppKit 候選窗。
 - 尚未完成正式 `.pkg` / `.dmg` installer。
 - macOS 實機 App 相容性仍需測 TextEdit、Safari、Chrome、VS Code、Terminal 等。
-- `,,,lock` / `,,,unlock` 等模式目前 core 已辨識，外殼行為仍需補齊。
+- `,,,c` / `,,,t`、`';` 注音模式、同音分頁與短根顯示仍需補齊。
 - `,,,z` / `,,,x` 需要 macOS 權限與選取文字流程實測。
 - 音效 `wavs/` 已隨 repo 簽入，供後續接上打字音使用。
 

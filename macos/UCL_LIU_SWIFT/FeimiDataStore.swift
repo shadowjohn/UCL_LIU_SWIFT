@@ -1,12 +1,25 @@
 import Foundation
 
 enum FeimiDataStore {
+    private static let dictionarySourceFileNames = [
+        "liu.json",
+        "liu.cin",
+        "liu-uni.tab"
+    ]
+
     static let applicationSupportDirectory: URL = {
         FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library", isDirectory: true)
             .appendingPathComponent("Application Support", isDirectory: true)
             .appendingPathComponent("UCL_LIU_SWIFT", isDirectory: true)
     }()
+
+    static func hasDictionarySource() -> Bool {
+        dictionarySourceFileNames.contains { fileName in
+            let url = applicationSupportDirectory.appendingPathComponent(fileName)
+            return FileManager.default.fileExists(atPath: url.path)
+        }
+    }
 
     static func loadDictionary() -> FeimiDictionary {
         do {

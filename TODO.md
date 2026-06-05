@@ -1,6 +1,6 @@
 # UCL_LIU_SWIFT TODO
 
-更新日期：2026-05-26
+更新日期：2026-06-05
 
 ## 粗估進度
 
@@ -43,6 +43,7 @@
 - [x] macOS `IMKServer` / `IMKInputController` 最小 scaffold。
 - [x] dev build / install / uninstall scripts。
 - [x] README 與 macOS install/uninstall 文件。
+- [x] 第一次缺字根提示與 menu bar 字根檔匯入。
 
 ## 0.01 必做：可順暢打字
 
@@ -51,8 +52,10 @@
 - [ ] 在 macOS + Xcode 上執行 `scripts/build-macos-input-method.sh`。
 - [ ] 修正 macOS framework 編譯錯誤，確認 `.app` 可產生。
 - [ ] 執行 `scripts/install-macos-input-method.sh`，確認輸入法出現在系統輸入來源。
-- [ ] 放入 `liu.json` / `liu.cin` / `liu-uni.tab`，確認字典載入與 cache 產生。
-- [ ] 若字典缺失，顯示可理解錯誤並寫 log，不讓輸入法 crash。
+- [x] 提供 `liu.json` / `liu.cin` / `liu-uni.tab` 匯入入口，匯入後觸發 reload。
+- [x] 若字典缺失，第一次啟用時提示匯入或開啟使用者資料夾，不讓輸入法 crash。
+- [ ] 在 macOS 實機確認匯入 `liu-uni.tab` 後產生 `liu.cin` / `liu.json` cache。
+- [ ] 若字典載入失敗，寫入正式 log 檔。
 
 ### P0：輸入事件與送字
 
@@ -79,7 +82,7 @@
 
 ### P0：基本指令副作用
 
-- [ ] `,,,version` 顯示版本或送出版本文字。
+- [x] `,,,version` 顯示版本或送出版本文字。
 - [x] `,,,lock` / `,,,unlock` 真的切換遊戲/正常模式。
 - [x] `,,,s` / `,,,l` 調整候選窗寬度。
 - [x] `,,,+` / `,,,-` 調整候選窗縮放。
@@ -114,6 +117,7 @@
 - [x] 重新載入字根的選單列項目。
 - [x] 重新載入 `pinyi.txt` 的選單列項目。
 - [x] menu bar 參考舊版 tray：關於、正常/遊戲切換、出字模式、畫面調整、Ctrl+Space、離開。
+- [x] menu bar 字根檔子選單：匯入字根、重新載入、開啟使用者資料夾。
 
 ## 0.01 風險功能：`,,,z` / `,,,x`
 

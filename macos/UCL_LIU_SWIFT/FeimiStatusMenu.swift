@@ -44,8 +44,7 @@ final class FeimiStatusMenu: NSObject, NSMenuDelegate {
         ))
         menu.addItem(disabledItem(title: "6.【　】顯示短根（未接上）"))
         menu.addItem(.separator())
-        menu.addItem(makeItem(title: "7.重新載入字典", action: #selector(reloadData)))
-        menu.addItem(makeItem(title: "8.開啟使用者資料夾", action: #selector(openApplicationSupportDirectory)))
+        menu.addItem(dictionaryMenuItem())
         menu.addItem(.separator())
         menu.addItem(makeItem(title: "11. 離開(Quit)", action: #selector(terminate), keyEquivalent: "q"))
     }
@@ -73,6 +72,16 @@ final class FeimiStatusMenu: NSObject, NSMenuDelegate {
         submenu.addItem(.separator())
         submenu.addItem(makeItem(title: "顯示文字框", action: #selector(showLegacyPanel)))
         submenu.addItem(makeItem(title: "隱藏文字框", action: #selector(hideLegacyPanel)))
+        item.submenu = submenu
+        return item
+    }
+
+    private func dictionaryMenuItem() -> NSMenuItem {
+        let item = makeItem(title: "7.字根檔", action: nil)
+        let submenu = NSMenu()
+        submenu.addItem(makeItem(title: "匯入字根檔...", action: #selector(importDictionary)))
+        submenu.addItem(makeItem(title: "重新載入字典", action: #selector(reloadData)))
+        submenu.addItem(makeItem(title: "開啟使用者資料夾", action: #selector(openApplicationSupportDirectory)))
         item.submenu = submenu
         return item
     }
@@ -141,16 +150,11 @@ final class FeimiStatusMenu: NSObject, NSMenuDelegate {
     }
 
     @objc private func openApplicationSupportDirectory() {
-        do {
-            try FileManager.default.createDirectory(
-                at: FeimiDataStore.applicationSupportDirectory,
-                withIntermediateDirectories: true
-            )
-            NSWorkspace.shared.open(FeimiDataStore.applicationSupportDirectory)
-        } catch {
-            NSSound.beep()
-            NSLog("UCL_LIU_SWIFT: cannot open application support directory: \(error)")
-        }
+        FeimiDictionaryImportController.shared.openApplicationSupportDirectory()
+    }
+
+    @objc private func importDictionary() {
+        FeimiDictionaryImportController.shared.importDictionary()
     }
 
     @objc private func reloadData() {

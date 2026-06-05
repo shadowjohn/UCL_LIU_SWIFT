@@ -41,6 +41,44 @@ final class MacOSMetadataTests: XCTestCase {
         XCTAssertTrue(source.contains("return false"))
     }
 
+    func testStatusMenuExposesDictionaryImportSubmenu() throws {
+        let source = try String(contentsOf: macOSSourceURL("FeimiStatusMenu.swift"))
+
+        XCTAssertTrue(source.contains("dictionaryMenuItem()"))
+        XCTAssertTrue(source.contains("7.字根檔"))
+        XCTAssertTrue(source.contains("匯入字根檔..."))
+        XCTAssertTrue(source.contains("#selector(importDictionary)"))
+        XCTAssertTrue(source.contains("#selector(reloadData)"))
+        XCTAssertTrue(source.contains("#selector(openApplicationSupportDirectory)"))
+    }
+
+    func testDictionaryImportControllerUsesOpenPanelBackupAndReloadNotification() throws {
+        let source = try String(contentsOf: macOSSourceURL("FeimiDictionaryImportController.swift"))
+
+        XCTAssertTrue(source.contains("final class FeimiDictionaryImportController"))
+        XCTAssertTrue(source.contains("NSOpenPanel"))
+        XCTAssertTrue(source.contains("FeimiDictionaryImportPlan"))
+        XCTAssertTrue(source.contains("temporaryDirectory"))
+        XCTAssertTrue(source.contains("Dictionary Backups"))
+        XCTAssertTrue(source.contains("NotificationCenter.default.post(name: .feimiReloadData"))
+    }
+
+    func testDataStoreCanDetectDictionarySourceFiles() throws {
+        let source = try String(contentsOf: macOSSourceURL("FeimiDataStore.swift"))
+
+        XCTAssertTrue(source.contains("static func hasDictionarySource() -> Bool"))
+        XCTAssertTrue(source.contains("\"liu.json\""))
+        XCTAssertTrue(source.contains("\"liu.cin\""))
+        XCTAssertTrue(source.contains("\"liu-uni.tab\""))
+        XCTAssertTrue(source.contains("fileExists(atPath:"))
+    }
+
+    func testInputControllerPromptsForMissingDictionaryOnActivation() throws {
+        let source = try String(contentsOf: macOSSourceURL("FeimiInputController.swift"))
+
+        XCTAssertTrue(source.contains("FeimiDictionaryImportController.shared.promptForMissingDictionaryIfNeeded()"))
+    }
+
     private func loadInfoPlist(
         file: StaticString = #filePath,
         line: UInt = #line

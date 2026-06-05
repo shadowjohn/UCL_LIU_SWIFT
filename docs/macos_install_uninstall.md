@@ -1,6 +1,6 @@
 # macOS 安裝、重裝、卸載與重設
 
-本文說明肥米輸入法在 macOS 上的預期安裝、重裝、卸載與重設流程。專案目前仍以 Swift Package 的 `FeimiCore` 為主，macOS App、InputMethodKit 包裝與 installer 尚未實作；以下安裝命令是未來 macOS 原生輸入法完成後可採用的流程草案。
+本文說明肥米輸入法在 macOS 上的安裝、重裝、卸載與重設流程。專案目前已有開發者用 InputMethodKit app 與 build/install scripts；正式 `.pkg` / `.dmg` installer 尚未完成。
 
 ## 系統需求
 
@@ -37,6 +37,22 @@ bash scripts/install-macos-input-method.sh
 1. `liu.json`
 2. `liu.cin`，並產生 `liu.json` cache
 3. `liu-uni.tab`，並產生 `liu.cin` 與 `liu.json` cache
+
+第一次啟用肥米時，若三種字根都不存在，會提示選取合法來源的 `liu-uni.tab`、`.cin` 或 `.json`。也可從 menu bar「肥」選單操作：
+
+```text
+7.字根檔 > 匯入字根檔...
+7.字根檔 > 重新載入字典
+7.字根檔 > 開啟使用者資料夾
+```
+
+匯入流程會先在暫存資料夾試載入選取檔；驗證成功後才替換目前字根。被替換的字根或 cache 會移到：
+
+```text
+$HOME/Library/Application Support/UCL_LIU_SWIFT/Dictionary Backups/<timestamp>/
+```
+
+仍可手動放檔：
 
 ```sh
 mkdir -p "$HOME/Library/Application Support/UCL_LIU_SWIFT"
@@ -167,6 +183,7 @@ open "$HOME/Library/Application Support/UCL_LIU_SWIFT"
 - `liu.json`
 - `liu.cin`
 - `liu-uni.tab`
+- `pinyi.txt`
 
 `liu-uni.tab` 有版權限制，不隨 repo 或安裝包提供，也不應簽入版本控制。專案可內建並散布的是 `pinyi.txt`。
 

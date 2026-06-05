@@ -1,5 +1,13 @@
 # History
 
+## 2026-06-05
+
+- 實作：新增 `FeimiDictionaryImportPlan`，支援 `liu-uni.tab` / `.cin` / `.json` 匯入規則、目的檔名正規化與替換前備份清單；Docker Swift `FeimiDictionaryImportPlanTests` 4 tests passing。
+- 實作：新增 macOS `FeimiDictionaryImportController`，提供 `NSOpenPanel` 選取字根檔、匯入前暫存資料夾試載入、替換既有字根/cache 前備份到 `Dictionary Backups/<timestamp>/`、匯入成功後發送 `.feimiReloadData`。
+- 實作：menu bar「肥」選單新增 `7.字根檔` 子選單，包含匯入字根檔、重新載入字典、開啟使用者資料夾。
+- 實作：`FeimiDataStore` 新增字根來源偵測；`FeimiInputController.activateServer` 會在第一次缺字根時提示使用者選取字根檔、開啟使用者資料夾或稍後處理。
+- 環境紀錄：本機 Windows 仍無 `swift`；本次曾發現 Docker Desktop WSL distro 停止，背景啟動後可用 `swift:5.9` container 跑 focused tests。
+
 ## 2026-05-26
 
 - 決策：`liu-uni.tab` 為有版權字根檔，只能作為本機參考/測試資料，不可簽入 repo；已加入 `.gitignore` 避免誤提交。
